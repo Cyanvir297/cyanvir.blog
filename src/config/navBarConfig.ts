@@ -48,13 +48,6 @@ export const navBarConfig: { nav: NavItemConfig[]; group: GroupMenuConfig[] } = 
       sortOrder: 2,
     },
     {
-      id: '9e67b81d-9d34-46cf-bdef-6ead9fcb5d61',
-      label: '友链',
-      href: '/link',
-      icon: 'line-md:link',
-      sortOrder: 3,
-    },
-    {
       id: '7f3a7680-c1e7-4f30-bef3-22de73723168',
       label: '关于',
       href: '/about',
@@ -67,19 +60,9 @@ export const navBarConfig: { nav: NavItemConfig[]; group: GroupMenuConfig[] } = 
       id: 'group-mysite',
       label: '我的网站',
       children: [
-        { id: 'ms-home', label: '个人主页', href: 'https://seln.cn/', icon: 'https://hexo.seln.cn/img/lemon.png', target: '_blank' },
+        { id: 'ms-home', label: '个人主页', href: 'https://seln.cn/', icon: 'https://hexo.seln.cn/img/fox.png', target: '_blank' },
         { id: 'ms-blog', label: '博客', href: 'https://mccsjs.cn/', icon: 'https://mccsjs.cn/img/ico.jpg', target: '_blank' },
         { id: 'ms-linkcheck', label: '友链检测', href: 'https://fc.mccsjs.cn/', icon: 'https://fc.mccsjs.cn/favicon.ico', target: '_blank' },
-      ],
-    },
-    {
-      id: 'group-friends',
-      label: '友情链接',
-      children: [
-        { id: 'fr-ayeez', label: '阿叶Ayeez', href: 'https://blog.ayeez.cn', icon: 'https://qiniu.ayeez.cn/avatar.jpg', target: '_blank' },
-        { id: 'fr-yuyu', label: '裕裕裕', href: 'https://yu-blog.top/', icon: '/friends/yuyu.webp', target: '_blank' },
-        { id: 'fr-zy', label: 'ZY知识库', href: 'https://blog.pljzy.top/', icon: '/friends/zy.webp', target: '_blank' },
-        { id: 'fr-tangshimei', label: 'TangShiMei', href: 'https://blog.224418.xyz/', icon: '/friends/tangshimei.webp', target: '_blank' },
       ],
     },
   ],

@@ -1240,16 +1240,16 @@
   min-height: 2.25rem;
   margin-top: var(--space-2);
   padding: var(--space-1) var(--space-2);
-  border: 1px solid color-mix(in srgb, #ca8a04 35%, transparent);
+  border: 1px solid color-mix(in srgb, #2563eb 35%, transparent);
   border-radius: var(--radius-small);
-  background: color-mix(in srgb, #facc15 10%, transparent);
+  background: color-mix(in srgb, #3b82f6 10%, transparent);
   color: var(--gb-text);
   font-size: 0.72rem;
 }
 
 .guestbook-composer__error > svg {
   flex: 0 0 auto;
-  color: #ca8a04;
+  color: #2563eb;
 }
 
 .guestbook-composer__error > span {

@@ -1,21 +1,11 @@
 ---
-import type { MenuItem } from '../../types';
-import MenuIcon from './MenuIcon.astro';
-import ImageWrapper from '../common/ImageWrapper.astro';
-import { getFriends } from '../../utils/data';
+import { footerConfig } from '../../config/footerConfig';
 
 interface Props {
   siteTitle?: string;
   icp?: string;
   footerText?: string;
   siteStartDate?: string;
-  menus?: MenuItem[];
-  showMotto?: string;
-  mottoTitle?: string;
-  mottoText?: string;
-  mottoCtaText?: string;
-  mottoCtaUrl?: string;
-  mottoCtaTarget?: string;
   footerBadges?: string;
 }
 
@@ -23,18 +13,11 @@ const {
   siteTitle = 'mccsjs',
   icp = '',
   footerText = '',
-  siteStartDate = '',
-  menus = [],
-  showMotto = 'true',
-  mottoTitle = '格言🧬',
-  mottoText = '',
-  mottoCtaText = '',
-  mottoCtaUrl = '',
-  mottoCtaTarget = '_self',
+  siteStartDate = '2026-08-30',
   footerBadges = '',
 } = Astro.props;
 
-// 解析页脚徽标（footerBadges 为 JSON 字符串数组）
+// shields.io 徽章（来自「页脚设置」JSON 字符串）
 let badges: { title: string; href: string; img: string }[] = [];
 try {
   if (footerBadges) badges = JSON.parse(footerBadges);
@@ -42,132 +25,72 @@ try {
   badges = [];
 }
 
+// 仪表盘技术栈徽标（脚页顶部时钟右侧）
+const dashboardBadges = footerConfig.dashboardBadges as Array<{ name: string; color: string }>;
+
+// ICP 备案（仪表盘右侧可点击链接）
+const icpConfig = footerConfig.icpConfig;
+
 const year = new Date().getFullYear();
 const startYear = siteStartDate ? new Date(siteStartDate).getFullYear() : NaN;
 const copyrightRange = !isNaN(startYear) && startYear < year ? `${startYear} - ${year}` : `${year}`;
-// 猜你想看：固定快捷导航
-const guessLinks: { label: string; href: string; target?: string }[] = [
-  { label: '我的朋友', href: '/link' },
-  { label: '留点什么', href: '/comments' },
-  { label: '关于作者', href: '/about' },
-  { label: '文章归档', href: '/archive' },
-  { label: '文章分类', href: '/categories' },
-  { label: '文章标签', href: '/tags' },
-];
-
-// 「推荐友链」：从本地友链数据读取 recommended=true 的项
-let friends: { name: string; url: string; avatar: string }[] = [];
-try {
-  friends = getFriends()
-    .filter((f) => f.recommended)
-    .map((f) => ({ name: f.name, url: f.url, avatar: f.avatar || f.screenshot || '' }));
-} catch {
-  // 读取失败时使用兜底
-}
-// 兜底：未设置任何推荐友链时，展示技术栈占位（可删）
-if (friends.length === 0) {
-  friends = [
-    { name: 'Astro', url: 'https://astro.build', avatar: 'https://astro.build/assets/press/astro-icon-dark.png' },
-    { name: 'Elysia', url: 'https://elysiajs.com', avatar: 'https://elysiajs.com/assets/elysia.svg' },
-    { name: 'Prisma', url: 'https://prisma.io', avatar: 'https://prisma.io/images/apple-touch-icon.png' },
-    { name: 'Tailwind CSS', url: 'https://tailwindcss.com', avatar: 'https://tailwindcss.com/favicons/apple-touch-icon.png' },
-  ];
-}
 ---
 
 <footer class="site-footer">
   <div id="footer-wrap">
-    <!-- 顶部分区：格言 + 猜你想看 / 推荐友链 -->
-    <div id="ft">
-      {/* 左：格言 + 猜你想看 */}
-      <div class="ft-item-1">
-        <div class="t-top">
-          {/* 格言 */}
-          {showMotto !== 'false' && (
-            <div class="t-t-l">
-              <p class="ft-t t-l-t">{mottoTitle}</p>
-              <div class="bg-ad">
-                {mottoText && <div class="motto">{mottoText}</div>}
-                {mottoCtaText && (
-                  <div class="btn-xz-box">
-                    <a
-                      class="btn-xz"
-                      href={mottoCtaUrl || '#'}
-                      target={mottoCtaTarget === '_blank' ? '_blank' : undefined}
-                      rel={mottoCtaTarget === '_blank' ? 'noopener noreferrer' : undefined}
-                    >{mottoCtaText}</a>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-          {/* 猜你想看 */}
-          <div class="t-t-r">
-            <p class="ft-t t-l-t">猜你想看💡</p>
-            <ul class="ft-links">
-              {Array.from({ length: Math.ceil(guessLinks.length / 2) }).map((_, row) => (
-                <li>
-                  {guessLinks.slice(row * 2, row * 2 + 2).map((l) => (
-                    <a href={l.href} target={l.target || undefined}>{l.label}</a>
-                  ))}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+
+    {/* 仪表盘长条：翻页时钟 + 运行天数 + 技术栈徽标 + ICP */}
+    <div id="ft-dash">
+      <div id="ft-clock">
+        <div class="clock-glow"></div>
+        <span id="clock-display">00:00:00</span>
+        <div class="clock-split"></div>
       </div>
 
-      {/* 右：推荐友链 */}
-      <div class="ft-item-2">
-        <p class="ft-t">推荐友链⌛</p>
-        <div class="ft-img-group">
-          {friends.map((f) => (
-            <div class="img-group-item">
-              <a href={f.url} title={f.name} target="_blank" rel="noopener noreferrer">
-                {f.avatar ? (
-                  <img src={f.avatar} alt={f.name} loading="lazy" />
-                ) : (
-                  <span class="img-fallback">{f.name.slice(0, 1)}</span>
-                )}
-              </a>
-            </div>
-          ))}
-          {/* 广告位招占位（有互动效果，不跳转） */}
-          <div class="img-group-item img-group-ad">
-            <span title="广告位招租" class="ad-placeholder-btn">
-              <ImageWrapper src="images/ad-placeholder.webp" alt="广告位招租" loading="lazy" />
+      <div id="ft-status">
+        <div class="ft-uptime">
+          <span class="dot"></span>
+          <span>系统已稳定运行：<span id="uptime-display">载入中</span></span>
+        </div>
+
+        <div class="ft-badges">
+          {dashboardBadges.map((b) => (
+            <span class="dbadge">
+              <span class="d-dot" style={`background:${b.color}`}></span>
+              {b.name}
             </span>
-          </div>
+          ))}
         </div>
+
+        {icpConfig && (
+          <div class="ft-icmp">
+            <a href={icpConfig.link} target="_blank" rel="noopener noreferrer">{icpConfig.name}</a>
+          </div>
+        )}
       </div>
     </div>
 
-    {/* 版权 */}
-    <div class="copyright">
-      <span><b>&copy;<span id="copyright-year" data-start-year={isNaN(startYear) ? '' : startYear}>{copyrightRange}</span> {siteTitle}</b></span>
+    {/* 底部：版权 / 自定义文字 / shields 徽章 */}
+    <div id="footer-bottom">
+      <div class="copyright">
+        <b>&copy;<span id="copyright-year" data-start-year={isNaN(startYear) ? '' : startYear}>{copyrightRange}</span> {siteTitle}</b>
+      </div>
+      {footerText && <div class="footer_custom_text" set:html={footerText} />}
+      {(badges.length > 0 || icp) && (
+        <p id="ghbdages">
+          {badges.map((b) => (
+            <a class="github-badge" target="_blank" href={b.href} title={b.title}>
+              <img src={b.img} alt="" loading="lazy" />
+            </a>
+          ))}
+          {icp && (
+            <a class="github-badge" target="_blank" href="https://beian.miit.gov.cn/" title="ICP 备案">
+              <img src={`https://img.shields.io/badge/ICP-${icp}-60a5fa?style=flat`} alt="" />
+            </a>
+          )}
+        </p>
+      )}
     </div>
-
-    {/* 网站运行时长计时器 */}
-    {siteStartDate && <div id="workboard"></div>}
-
-    {/* 自定义页脚文字 */}
-    {footerText && <div class="footer_custom_text" set:html={footerText} />}
-
-    {/* shields.io 徽章（来自系统设置「页脚设置」） */}
-    {(badges.length > 0 || icp) && (
-      <p id="ghbdages">
-        {badges.map((b) => (
-          <a class="github-badge" target="_blank" href={b.href} title={b.title}>
-            <img src={b.img} alt="" loading="lazy" />
-          </a>
-        ))}
-        {icp && (
-          <a class="github-badge" target="_blank" href="https://beian.miit.gov.cn/" title="ICP 备案">
-            <img src={`https://img.shields.io/badge/ICP-${icp}-a8d5b8?style=flat`} alt="" />
-          </a>
-        )}
-      </p>
-    )}
   </div>
 </footer>
 
@@ -184,244 +107,183 @@ if (friends.length === 0) {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
-    padding: 12px 20px 0;
+    gap: 16px;
+    padding: 18px 20px 10px;
     max-width: 1200px;
     margin: 0 auto;
   }
 
-  /* 顶部分区：左(格言+猜你想看) 右(友链) */
-  #ft {
+  /* ===== 仪表盘长条 ===== */
+  #ft-dash {
     width: 100%;
     display: flex;
-    flex-wrap: wrap;
-    text-align: left;
-    color: rgb(var(--fg-muted));
-    margin-bottom: 14px;
-  }
-  .ft-item-1,
-  .ft-item-2 {
-    display: flex;
-    height: 100%;
-    padding: 10px 14px;
-  }
-  .ft-item-1 {
-    flex: 2;
-    flex-direction: column;
-  }
-  .ft-item-2 {
-    flex: 1;
-    flex-direction: column;
-  }
-
-  .t-top {
-    display: flex;
-  }
-  .t-top .t-t-l {
-    display: flex;
-    flex-direction: column;
-    flex: 1.4;
-    margin-right: 10px;
-  }
-  .t-top .t-t-r {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-
-  /* 格言卡片（玻璃拟态） */
-  .t-top .t-t-l .bg-ad {
-    width: 85%;
+    flex-direction: row;
+    align-items: stretch;
     border-radius: 16px;
-    padding: 14px 16px;
-    background: transparent;
-    border: none;
-    backdrop-filter: none;
-  }
-  .motto {
-    font-size: 0.82rem;
-    line-height: 1.7;
-    color: rgb(var(--fg-soft));
-  }
-  .btn-xz-box {
-    margin-top: 12px;
-  }
-  .btn-xz {
-    display: block;
-    background: var(--color-accent-sand);
-    color: var(--color-ink-700);
-    text-align: center;
-    line-height: 2.4;
-    border-radius: 16px;
-    font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .btn-xz:hover {
-    text-decoration: none;
-    background: #c4a884;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.35);
-  }
-
-  /* 猜你想看：两列链接 */
-  .ft-links {
-    padding: 0 14px;
-    list-style: none;
-    margin: 0;
-  }
-  .ft-links li {
-    display: flex;
-    gap: 0;
-  }
-  .ft-links li a {
-    flex: 1;
-    box-sizing: border-box;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 12px;
-    color: rgb(var(--fg-soft));
-    transition: color 0.25s ease, transform 0.2s ease;
-  }
-  .ft-links li a:hover {
-    text-decoration: none;
-    color: rgb(var(--primary));
-    transform: translateX(3px);
-  }
-
-  /* 推荐友链头像网格 — 5列自适应 */
-  .ft-item-2 .ft-img-group {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .ft-t {
-    font-size: 0.8rem;
-    margin-bottom: 18px;
-    line-height: 1;
-    font-weight: 700;
-    color: rgb(var(--fg-soft));
-  }
-  .t-l-t {
-    padding-left: 14px;
-  }
-  .ft-item-2 .ft-img-group .img-group-item {
-    width: calc(20% - 8px);
-    flex-shrink: 0;
-  }
-  .ft-item-2 .ft-img-group .img-group-item a {
-    display: block;
-    width: 100%;
-    aspect-ratio: 1;
-    border-radius: 12px;
-    overflow: hidden;
     background: rgb(var(--card-bg) / 0.6);
+    backdrop-filter: blur(8px);
     border: 1px solid rgb(var(--card-border));
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 10px 30px -16px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    min-height: 76px;
+    transition: box-shadow 0.35s ease, border-color 0.35s ease;
   }
-  .ft-item-2 .ft-img-group .img-group-item a:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 22px -10px rgba(0, 0, 0, 0.4);
-    border-color: var(--color-accent-sand);
+  .dark #ft-dash {
+    background: rgba(45, 48, 58, 0.6);
   }
 
-  /* 广告位占位按钮：互动效果但不跳转 */
-  .ad-placeholder-btn {
-    display: block;
-    width: 100%;
-    aspect-ratio: 1;
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    background: linear-gradient(135deg, rgba(59,130,246,.08), rgba(147,197,253,.12));
-    position: relative;
-    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .ad-placeholder-btn::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 12px;
-    opacity: 0;
-    background: radial-gradient(circle at center, rgba(59,130,246,.18) 0%, transparent 70%);
-    transition: opacity 0.35s ease;
-  }
-  .ad-placeholder-btn img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 11px;
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
-    opacity: 0.85;
-    transition: all 0.35s ease;
-  }
-  .ad-placeholder-btn:hover {
-    transform: translateY(-3px) scale(1.03);
-    box-shadow: 0 10px 26px -10px rgba(59, 130, 246, 0.45);
-    background: linear-gradient(135deg, rgba(59,130,246,.14), rgba(147,197,253,.18));
-  }
-  .ad-placeholder-btn:hover::after {
-    opacity: 1;
-  }
-  .ad-placeholder-btn:hover img {
-    opacity: 1;
-  }
-  .ad-placeholder-btn:active {
-    transform: translateY(-1px) scale(1.01);
-    box-shadow: 0 4px 14px -8px rgba(59, 130, 246, 0.4);
-  }
-  .ft-item-2 .ft-img-group .img-group-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .img-fallback {
+  /* 翻页时钟（深色底，始终深色，模拟翻页显示屏） */
+  #ft-clock {
+    background: var(--color-ink-800);
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    height: 100%;
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--color-accent-sand);
+    padding: 0 30px;
+    min-width: 210px;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    transition: color 0.3s ease;
+  }
+  #ft-clock:hover {
+    color: #818cf8;
+  }
+  #clock-display {
+    font-family: 'SF Mono', 'Menlo', 'Consolas', 'Courier New', monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 900;
+    font-size: 1.6rem;
+    letter-spacing: 3px;
+    color: #ffffff;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 0 12px rgba(129, 140, 248, 0.25);
+  }
+  #ft-clock:hover #clock-display {
+    color: #a5b4fc;
+    text-shadow: 0 0 14px rgba(165, 180, 252, 0.4);
+  }
+  .clock-split {
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    top: 50%;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 2;
+  }
+  .clock-glow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 60%);
+    pointer-events: none;
   }
 
-  /* 版权 / 自定义文字 */
-  #footer-wrap .copyright,
-  #footer-wrap .footer_custom_text,
-  #footer-wrap #ghbdages {
-    margin: 0 auto;
+  /* 右侧状态区 */
+  #ft-status {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 18px;
+    padding: 0 22px;
+    font-size: 0.85rem;
+    color: rgb(var(--fg-soft));
+    font-weight: 600;
+  }
+  .ft-uptime {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ft-uptime .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
+    animation: pulse 1.6s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  #uptime-display {
+    color: #818cf8;
+    font-weight: 800;
+  }
+  .dark #uptime-display {
+    color: #a5b4fc;
+  }
+
+  .ft-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .dbadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgb(var(--card-bg) / 0.6);
+    border: 1px solid rgb(var(--card-border));
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgb(var(--fg-soft));
+    transition: border-color 0.25s ease, transform 0.25s ease;
+  }
+  .dbadge .d-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+  .dbadge:hover {
+    border-color: var(--color-accent-sand);
+    transform: translateY(-1px);
+  }
+
+  .ft-icmp a {
+    color: rgb(var(--fg-soft));
+    border-bottom: 1px dashed rgb(var(--fg-muted));
+    text-decoration: none;
+    font-weight: 700;
+    transition: color 0.25s ease;
+  }
+  .ft-icmp a:hover {
+    color: #818cf8;
+  }
+  .dark .ft-icmp a:hover {
+    color: #a5b4fc;
+  }
+
+  /* ===== 底部 ===== */
+  #footer-bottom {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
   }
   .copyright {
-    font-size: 1rem;
-    margin-top: -16px !important;
+    font-size: 0.95rem;
+    text-align: center;
   }
-  #workboard {
-    font-size: 0.82rem;
-    font-weight: 700;
-    margin-top: 6px;
+  .copyright b {
     color: rgb(var(--fg-soft));
-    letter-spacing: 0.5px;
-  }
-  .runtime-heart {
-    display: inline-block;
-    margin-left: 2px;
-    animation: heartbeat 1.2s ease-in-out infinite;
   }
   .footer_custom_text {
-    margin-top: 8px;
     font-size: 0.8rem;
+    text-align: center;
   }
-
-  /* shields 徽章 */
   #ghbdages {
-    display: block;
-    margin-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin: 2px 0 0;
   }
   .github-badge {
     display: inline-block;
-    margin: 2px 5px;
   }
   .github-badge img {
     height: 20px;
@@ -434,115 +296,78 @@ if (friends.length === 0) {
     transform: scale(1.06);
   }
 
-  /* 响应式 */
-  @media screen and (max-width: 768px) {
-    .ft-item-1,
-    .ft-item-2 {
-      flex-basis: 100% !important;
-    }
-    .t-top .t-t-l .bg-ad {
-      width: 100%;
-    }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.5; }
+  }
 
-    /* 手机端底部区域：压缩底部避免悬空 */
+  /* ===== 响应式 ===== */
+  @media screen and (max-width: 768px) {
+    #ft-dash {
+      flex-direction: column;
+    }
+    #ft-clock {
+      min-width: 100%;
+      padding: 14px 0;
+    }
+    #clock-display {
+      font-size: 1.4rem;
+    }
+    #ft-status {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px 18px;
+      gap: 10px;
+    }
+  }
+  @media screen and (max-width: 576px) {
     #footer-wrap {
-      padding: 16px 20px 0;
+      padding: 16px 18px 8px;
+      gap: 14px;
     }
-    .copyright {
-      margin-top: 0 !important;
+    #clock-display {
+      font-size: 1.2rem;
+      letter-spacing: 2px;
     }
-    #workboard {
-      margin-top: 8px;
-      font-size: 0.78rem;
-    }
-    #ghbdages {
-      margin-top: 8px;
-    }
-    .github-badge {
-      margin: 1px 4px;
+    #ft-clock {
+      min-width: 100%;
     }
     .github-badge img {
       max-height: 22px;
     }
   }
-  @media screen and (max-width: 576px) {
-    .t-top {
-      flex-wrap: wrap;
-    }
-    .t-top .t-t-l,
-    .t-top .t-t-r {
-      flex-basis: 100% !important;
-    }
-    .t-top .t-t-r {
-      margin-top: 16px;
-    }
-    .ft-item-2 .ft-img-group .img-group-item {
-      width: calc(20% - 8px);
-    }
-    .ad-placeholder-btn {
-      /* 跟随 aspect-ratio:1 自动正方 */
-    }
-
-    /* 小屏底部进一步宽松 */
-    #workboard {
-      font-size: 0.75rem;
-    }
-    .github-badge img {
-      max-height: 20px;
-    }
-  }
-  @keyframes heartbeat {
-    0%, 100% { transform: scale(1); }
-    25% { transform: scale(1.15); }
-    50% { transform: scale(1); }
-    75% { transform: scale(1.1); }
-  }
 </style>
 
-{siteStartDate && (
-  <script define:vars={{ startDate: siteStartDate }}>
-    function createRuntimeCounter() {
-      const startTime = new Date(startDate);
-      if (isNaN(startTime.getTime())) return;
+<script is:inline define:vars={{ startDate: siteStartDate, year, startYear }}>
+  function pad(n) { return String(n).padStart(2, '0'); }
 
-      function pad(n) { return String(n).padStart(2, '0'); }
-
-      function update() {
-        const now = new Date();
-        const diff = now - startTime;
-        const totalDays = Math.floor(diff / 86400000);
-        const years = Math.floor(totalDays / 365);
-        const days = totalDays % 365;
-        const hours = Math.floor((diff % 86400000) / 3600000);
-        const minutes = Math.floor((diff % 3600000) / 60000);
-        const seconds = Math.floor((diff % 60000) / 1000);
-
-        let text;
-        if (years > 0) {
-          text = `\u672C\u7AD9\u5C45\u7136\u8FD0\u884C\u4E86${years}\u5E74${days}\u5929${pad(hours)}\u5C0F\u65F6${pad(minutes)}\u5206${pad(seconds)}\u79D2`;
-        } else {
-          text = `\u672C\u7AD9\u5C45\u7136\u8FD0\u884C\u4E86${totalDays}\u5929${pad(hours)}\u5C0F\u65F6${pad(minutes)}\u5206${pad(seconds)}\u79D2`;
-        }
-
-        const el = document.getElementById('workboard');
-        if (el) el.innerHTML = text + '<span class="runtime-heart">❤️</span>';
-      }
-
-      update();
-      setInterval(update, 1000);
+  function tick() {
+    var now = new Date();
+    var timeEl = document.getElementById('clock-display');
+    if (timeEl) {
+      timeEl.textContent = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
     }
-    createRuntimeCounter();
-  </script>
-)}
+    var st = Date.parse(startDate);
+    if (!isNaN(st)) {
+      var diff = now - st;
+      var days = Math.floor(diff / 86400000);
+      var hours = Math.floor((diff / 3600000) % 24);
+      var up = document.getElementById('uptime-display');
+      if (up) up.textContent = days + '天 ' + hours + '小时';
+    }
+  }
 
-{/* 版权年份：浏览器端实时刷新，避免静态构建后年份被写死 */}
-<script>
+  tick();
+  setInterval(tick, 1000);
+
   function updateCopyrightYear() {
     var el = document.getElementById('copyright-year');
     if (!el) return;
-    var startYear = parseInt(el.getAttribute('data-start-year') || '', 10);
+    var sy = parseInt(el.getAttribute('data-start-year') || '', 10);
     var y = new Date().getFullYear();
-    el.textContent = (!isNaN(startYear) && startYear < y) ? (startYear + ' - ' + y) : String(y);
+    el.textContent = (!isNaN(sy) && sy < y) ? (sy + ' - ' + y) : String(y);
   }
   updateCopyrightYear();
   document.addEventListener('astro:page-load', updateCopyrightYear);

@@ -1,14 +1,14 @@
 /* ===== toc.css：文章页目录 TOC ===== */
 /* ========= 文章页目录 TOC 样式（全局，避免 swup 切换后样式丢失） ========= */
 #toc-list {
-  --toc-color: #6b7280;
-  --toc-active-bg: rgba(234, 179, 8, 0.12);
-  --toc-active-text: #ca8a04;
+  --toc-color: #64748b;
+  --toc-active-bg: rgba(59, 130, 246, 0.10);
+  --toc-active-text: #2563eb;
 }
 .dark #toc-list {
-  --toc-color: #9ca3af;
-  --toc-active-bg: rgba(250, 204, 21, 0.12);
-  --toc-active-text: #facc15;
+  --toc-color: #94a3b8;
+  --toc-active-bg: rgba(147, 197, 253, 0.14);
+  --toc-active-text: #93c5fd;
 }
 #toc-list,
 #toc-list ol {
@@ -47,10 +47,10 @@ li.toc-item.active > ol.toc-child { display: block; }
 .dark .toc-level-1 > .toc-link { color: #d1d5db; }
 .toc-link:hover:not(.active) {
   color: var(--toc-active-text);
-  background: rgba(234, 179, 8, 0.04);
+  background: rgba(59, 130, 246, 0.04);
 }
 .dark .toc-link:hover:not(.active) {
-  background: rgba(250, 204, 21, 0.06);
+  background: rgba(147, 197, 253, 0.06);
 }
 .toc-link.active {
   font-weight: 600;

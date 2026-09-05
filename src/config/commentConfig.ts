@@ -2,5 +2,5 @@
 // 全站 twikoo 配置的唯一来源：改这里即可全局生效，
 // 各页面/组件均从 settings.twikooEnvId 读取，不再单独硬编码。
 export const commentConfig = {
-  envId: 'https://twikoo.mccsjs.cn',
+  envId: 'https://twikoo-vercel-n38rz6bjf-cyanvir297.vercel.app',
 };

@@ -55,15 +55,15 @@
 
       years.forEach(function (year) {
         html += '<section class="relative"><div class="flex items-center gap-4 mb-6">';
-        html += '<div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-yellow-400 text-sm font-bold text-white shadow-sm sm:h-10 sm:w-10">' + escapeHtml(year.slice(2)) + '</div>';
+        html += '<div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-sm font-bold text-white shadow-sm sm:h-10 sm:w-10">' + escapeHtml(year.slice(2)) + '</div>';
         html += '<h2 class="text-2xl font-bold text-[rgb(var(--fg))] dark:text-[rgb(var(--fg))]">' + escapeHtml(year) + '</h2>';
         html += '<span class="text-sm text-[rgb(var(--fg-muted))] dark:text-[rgb(var(--fg-muted))]">' + grouped[year].length + ' 篇</span></div>';
         html += '<div class="ml-12 space-y-3 sm:ml-16">';
         grouped[year].forEach(function (post) {
           html += '<a href="/posts/' + escapeHtml(post.slug) + '" class="group flex items-start gap-4 rounded-xl border border-[rgb(var(--card-border))] bg-[rgb(var(--card-bg))] p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-[rgb(var(--card-border))] dark:bg-[rgb(var(--card-bg))]">';
           html += '<time class="shrink-0 pt-0.5 text-sm font-medium text-[rgb(var(--fg-muted))] dark:text-[rgb(var(--fg-muted))]">' + escapeHtml(formatMonthDay(post.createdAt)) + '</time>';
-          html += '<div class="min-w-0 flex-1"><h3 class="truncate text-base font-semibold text-[rgb(var(--fg))] group-hover:text-yellow-600 dark:text-[rgb(var(--fg))] dark:group-hover:text-yellow-400">' + escapeHtml(post.title) + '</h3>';
-          html += '<div class="mt-1 flex items-center gap-2 text-xs text-[rgb(var(--fg-muted))] dark:text-[rgb(var(--fg-muted))]"><span class="rounded-full bg-yellow-50 px-2 py-0.5 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">' + escapeHtml(post.category) + '</span>';
+          html += '<div class="min-w-0 flex-1"><h3 class="truncate text-base font-semibold text-[rgb(var(--fg))] group-hover:text-blue-600 dark:text-[rgb(var(--fg))] dark:group-hover:text-sky-400">' + escapeHtml(post.title) + '</h3>';
+          html += '<div class="mt-1 flex items-center gap-2 text-xs text-[rgb(var(--fg-muted))] dark:text-[rgb(var(--fg-muted))]"><span class="rounded-full bg-blue-50 px-2 py-0.5 text-blue-700 dark:bg-blue-900/30 dark:text-sky-400">' + escapeHtml(post.category) + '</span>';
           if (post.tags.length > 0) html += '<span class="truncate">' + post.tags.map(function (tag) { return '#' + escapeHtml(tag); }).join(' ') + '</span>';
           html += '</div></div></a>';
         });

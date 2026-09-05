@@ -12,18 +12,18 @@
         <title>站点地图 · Sitemap</title>
         <style>
           :root {
-            --bg: 255 248 241; --bg-soft: 255 241 227; --surface: 255 255 255;
-            --fg: 35 25 21; --fg-soft: 83 67 60; --fg-muted: 120 110 100;
-            --primary: 165 85 38; --primary-soft: 255 235 210;
-            --border: 220 200 180; --card-bg: 255 255 255;
-            --glass: 255 248 241;
+            --bg: 248 250 252; --bg-soft: 239 246 255; --surface: 255 255 255;
+            --fg: 15 23 42; --fg-soft: 30 41 59; --fg-muted: 71 85 105;
+            --primary: 59 130 246; --primary-soft: 219 234 254;
+            --border: 203 213 225; --card-bg: 255 255 255;
+            --glass: 248 250 252;
           }
           html.dark {
-            --bg: 17 19 28; --bg-soft: 29 31 41; --surface: 45 48 58;
-            --fg: 225 225 239; --fg-soft: 220 210 200; --fg-muted: 180 175 168;
-            --primary: 255 182 147; --primary-soft: 100 45 10;
-            --border: 90 80 70; --card-bg: 45 48 58;
-            --glass: 29 31 41;
+            --bg: 15 23 42; --bg-soft: 30 41 59; --surface: 30 41 59;
+            --fg: 226 232 240; --fg-soft: 203 213 225; --fg-muted: 148 163 184;
+            --primary: 96 165 250; --primary-soft: 30 58 138;
+            --border: 51 65 85; --card-bg: 30 41 59;
+            --glass: 30 41 59;
           }
           * { box-sizing: border-box; margin: 0; padding: 0; }
           html { scroll-behavior: smooth; }

@@ -33,8 +33,7 @@ export async function GET(context: APIContext) {
   lines.push(`- [归档](${origin}/archive): 全部文章按时间归档`);
   lines.push(`- [分类](${origin}/categories): 按分类浏览文章`);
   lines.push(`- [标签](${origin}/tags): 按标签浏览文章`);
-  lines.push(`- [友链](${origin}/link): 友情链接`);
-  lines.push(`- [留言板](${origin}/comments): 访客留言`);
+    lines.push(`- [留言板](${origin}/comments): 访客留言`);
   lines.push(`- [关于](${origin}/about): 站长信息`);
   lines.push('');
   lines.push('## 内容索引');

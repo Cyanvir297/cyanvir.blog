@@ -79,7 +79,7 @@ export async function GET({ props }: APIContext<{ post: Post }>): Promise<Respon
   const iconFsPath = (siteConfig.favicon as { fsPath?: string }).fsPath ?? null;
   const iconBase64 = iconFsPath ? await imageToPngBase64(iconFsPath) : null;
 
-  const primaryColor = '#d97706'; // amber-600，站点强调色
+  const primaryColor = '#3b82f6'; // blue-500，站点强调色
   const textColor = '#f3f4f6';
   const subtleColor = '#9ca3af';
   const backgroundColor = '#1a1b2e';

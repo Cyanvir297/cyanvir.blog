@@ -1,49 +1,51 @@
 /* ===== base.css：基础层（变量 / 滚动条 / 防溢出 / swup 过渡 / 文章正文）===== */
 @layer base {
   :root {
-    --bg: 255 248 241;
-    --bg-soft: 255 241 227;
+    --bg: 248 250 252;
+    --bg-soft: 239 246 255;
     --surface: 255 255 255;
-    --surface-variant: 244 212 190;
-    --fg: 35 25 21;
-    --fg-soft: 83 67 60;
-    --fg-muted: 120 110 100;
-    --primary: 165 85 38;
-    --primary-container: 255 235 210;
-    --border: 220 200 180;
-    --border-light: 240 230 220;
-    --outline: 180 160 140;
-    --glass-bg: 255 248 241;
-    --glass-border: 220 200 180;
+    --surface-variant: 232 240 254;
+    --fg: 15 23 42;
+    --fg-soft: 30 41 59;
+    --fg-muted: 71 85 105;
+    --primary: 59 130 246;
+    --primary-hover: 37 99 235;
+    --primary-container: 219 234 254;
+    --border: 203 213 225;
+    --border-light: 226 232 240;
+    --outline: 148 163 184;
+    --glass-bg: 248 250 252;
+    --glass-border: 203 213 225;
     --card-bg: 255 255 255;
-    --card-border: 220 200 180;
-    --card-text: 35 25 21;
-    --card-text-secondary: 120 110 100;
-    --tag-bg: 255 241 227;
-    --tag-border: 220 200 180;
+    --card-border: 226 232 240;
+    --card-text: 15 23 42;
+    --card-text-secondary: 71 85 105;
+    --tag-bg: 219 234 254;
+    --tag-border: 203 213 225;
   }
 
   .dark {
-    --bg: 17 19 28;
-    --bg-soft: 29 31 41;
-    --surface: 45 48 58;
-    --surface-variant: 62 64 75;
-    --fg: 225 225 239;
-    --fg-soft: 220 210 200;
-    --fg-muted: 180 175 168;
-    --primary: 255 182 147;
-    --primary-container: 100 45 10;
-    --border: 90 80 70;
-    --border-light: 70 65 58;
-    --outline: 169 155 145;
-    --glass-bg: 29 31 41;
-    --glass-border: 90 80 70;
-    --card-bg: 45 48 58;
-    --card-border: 90 80 70;
-    --card-text: 245 245 255;
-    --card-text-secondary: 180 175 168;
-    --tag-bg: 29 31 41;
-    --tag-border: 90 80 70;
+    --bg: 15 23 42;
+    --bg-soft: 30 41 59;
+    --surface: 30 41 59;
+    --surface-variant: 51 65 85;
+    --fg: 226 232 240;
+    --fg-soft: 203 213 225;
+    --fg-muted: 148 163 184;
+    --primary: 96 165 250;
+    --primary-hover: 147 197 253;
+    --primary-container: 30 58 138;
+    --border: 51 65 85;
+    --border-light: 71 85 105;
+    --outline: 148 163 184;
+    --glass-bg: 30 41 59;
+    --glass-border: 51 65 85;
+    --card-bg: 30 41 59;
+    --card-border: 71 85 105;
+    --card-text: 226 232 240;
+    --card-text-secondary: 148 163 184;
+    --tag-bg: 30 41 59;
+    --tag-border: 71 85 105;
   }
 
   html {
@@ -165,19 +167,19 @@ html.is-rendering .transition-swup-leaving {
   /* ===== mark 高亮（==text== 语法）===== */
   .post-content mark,
   #link-markdown-section mark {
-    background: #fef08a;
-    color: #1a1a1a;
+    background: #dbeafe;
+    color: #1e3a8a;
     padding: 0.1em 0.25em;
     border-radius: 3px;
-    border: 1px solid #eab308;
+    border: 1px solid #93c5fd;
   }
   html.dark .post-content mark,
   html.dark #link-markdown-section mark {
-    background: #ca8a04;
-    color: #1a1a1a;
+    background: #1e3a8a;
+    color: #eff6ff;
     padding: 0.1em 0.25em;
     border-radius: 3px;
-    border: 1px solid #a16207;
+    border: 1px solid #3b82f6;
   }
 
   /* ===== 折叠框（details，Hexo folding 转换产物）===== */

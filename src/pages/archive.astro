@@ -96,7 +96,7 @@ const serializedTotalPages = JSON.stringify(totalPages);
             {pagedYears.map((year) => (
               <section class="relative">
                 <div class="flex items-center gap-4 mb-6">
-                  <div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-yellow-400 text-sm font-bold text-white shadow-sm sm:h-10 sm:w-10 dark:bg-yellow-500">
+                  <div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-sm font-bold text-white shadow-sm sm:h-10 sm:w-10 dark:bg-sky-500">
                     {year.slice(2)}
                   </div>
                   <h2 class="text-2xl font-bold text-[rgb(var(--fg))] dark:text-[rgb(var(--fg))]">{year}</h2>
@@ -115,11 +115,11 @@ const serializedTotalPages = JSON.stringify(totalPages);
                         {formatMonthDay(post.createdAt)}
                       </time>
                       <div class="min-w-0 flex-1">
-                        <h3 class="truncate text-base font-semibold text-[rgb(var(--fg))] group-hover:text-yellow-600 dark:text-[rgb(var(--fg))] dark:group-hover:text-yellow-400">
+                        <h3 class="truncate text-base font-semibold text-[rgb(var(--fg))] group-hover:text-blue-600 dark:text-[rgb(var(--fg))] dark:group-hover:text-sky-400">
                           {post.title}
                         </h3>
                         <div class="mt-1 flex items-center gap-2 text-xs text-[rgb(var(--fg-muted))] dark:text-[rgb(var(--fg-muted))]">
-                          <span class="rounded-full bg-yellow-50 px-2 py-0.5 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
+                          <span class="rounded-full bg-blue-50 px-2 py-0.5 text-blue-700 dark:bg-blue-900/30 dark:text-sky-400">
                             {post.category.name}
                           </span>
                           {post.tags.length > 0 && (
@@ -216,7 +216,7 @@ const serializedTotalPages = JSON.stringify(totalPages);
       html += `
         <section class="relative">
           <div class="flex items-center gap-4 mb-6">
-            <div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-yellow-400 text-sm font-bold text-white shadow-sm sm:h-10 sm:w-10">
+            <div class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-sm font-bold text-white shadow-sm sm:h-10 sm:w-10">
               ${year.slice(2)}
             </div>
             <h2 class="text-2xl font-bold text-[rgb(var(--fg))] dark:text-[rgb(var(--fg))]">${year}</h2>
@@ -237,11 +237,11 @@ const serializedTotalPages = JSON.stringify(totalPages);
               ${formatMonthDay(post.createdAt)}
             </time>
             <div class="min-w-0 flex-1">
-              <h3 class="truncate text-base font-semibold text-[rgb(var(--fg))] group-hover:text-yellow-600 dark:text-[rgb(var(--fg))] dark:group-hover:text-yellow-400">
+              <h3 class="truncate text-base font-semibold text-[rgb(var(--fg))] group-hover:text-blue-600 dark:text-[rgb(var(--fg))] dark:group-hover:text-sky-400">
                 ${escapeHtml(post.title)}
               </h3>
               <div class="mt-1 flex items-center gap-2 text-xs text-[rgb(var(--fg-muted))] dark:text-[rgb(var(--fg-muted))]">
-                <span class="rounded-full bg-yellow-50 px-2 py-0.5 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
+                <span class="rounded-full bg-blue-50 px-2 py-0.5 text-blue-700 dark:bg-blue-900/30 dark:text-sky-400">
                   ${escapeHtml(post.category)}
                 </span>
                 ${post.tags.length > 0 ? `<span class="truncate">${post.tags.map((tag) => `#${escapeHtml(tag)}`).join(' ')}</span>` : ''}

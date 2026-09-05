@@ -77,15 +77,15 @@
   margin-top: 0 !important;
   margin-bottom: 20px !important;
   border-radius: 12px !important;
-  background: #fdfcf9 !important;
-  border: 1px solid #e8e3da !important;
+  background: rgb(var(--card-bg)) !important;
+  border: 1px solid rgb(var(--card-border)) !important;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04), 0 8px 24px -4px rgba(0, 0, 0, 0.06) !important;
   transition: all 0.3s ease !important;
 }
 .dark .twikoo .tk-comments-container > .tk-comment,
 .dark .twikoo .tk-comments .tk-submit {
-  background: #2a2a35 !important;
-  border: 1px solid #42444a !important;
+  background: rgb(var(--card-bg)) !important;
+  border: 1px solid rgb(var(--card-border)) !important;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 8px 24px -4px rgba(0, 0, 0, 0.3) !important;
 }
 .twikoo .tk-comments-container > .tk-comment:hover {
@@ -96,16 +96,16 @@
 /* 设备信息栏 */
 .twikoo .tk-extra {
   border-radius: 12px !important;
-  background: #fdfcf9 !important;
+  background: rgb(var(--card-bg)) !important;
   padding: 0.4rem !important;
   margin-bottom: 1rem !important;
-  border: 1px solid #e8e3da !important;
+  border: 1px solid rgb(var(--card-border)) !important;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
   transition: all 0.3s ease !important;
 }
 .dark .twikoo .tk-extra {
-  background: #2a2a35 !important;
-  border: 1px solid #42444a !important;
+  background: rgb(var(--card-bg)) !important;
+  border: 1px solid rgb(var(--card-border)) !important;
 }
 .twikoo .tk-extra:hover {
   box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08) !important;
@@ -121,30 +121,30 @@
   min-width: 140px !important;
   padding: 10px 20px !important;
   border-radius: 12px !important;
-  background: #fdfcf9 !important;
-  border: 1px solid #e8e3da !important;
+  background: rgb(var(--card-bg)) !important;
+  border: 1px solid rgb(var(--card-border)) !important;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04), 0 8px 24px -4px rgba(0, 0, 0, 0.06) !important;
-  color: #5c5a56 !important;
+  color: rgb(var(--fg-soft)) !important;
   font-weight: 500 !important;
   cursor: pointer !important;
   transition: all 0.3s ease !important;
   text-align: center !important;
 }
 .dark .twikoo .tk-expand {
-  background: #2a2a35 !important;
-  border: 1px solid #42444a !important;
+  background: rgb(var(--card-bg)) !important;
+  border: 1px solid rgb(var(--card-border)) !important;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 8px 24px -4px rgba(0, 0, 0, 0.3) !important;
-  color: #b8b5ad !important;
+  color: rgb(var(--fg-muted)) !important;
 }
 .twikoo .tk-expand:hover {
   box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08), 0 12px 32px -8px rgba(0, 0, 0, 0.10) !important;
   transform: translateY(-2px) !important;
-  background-color: rgba(220, 150, 100, 0.08) !important;
-  border-color: rgba(220, 150, 100, 0.25) !important;
+  background-color: rgba(59, 130, 246, 0.08) !important;
+  border-color: rgba(59, 130, 246, 0.25) !important;
 }
 .dark .twikoo .tk-expand:hover {
-  background-color: rgba(255, 182, 147, 0.12) !important;
-  border-color: rgba(255, 182, 147, 0.35) !important;
+  background-color: rgba(96, 165, 250, 0.14) !important;
+  border-color: rgba(147, 197, 253, 0.35) !important;
 }
 
 /* 移动端隐藏设备信息 */

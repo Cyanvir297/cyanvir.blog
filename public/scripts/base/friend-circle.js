@@ -108,7 +108,7 @@
     var body = document.createElement('div');
     body.className = 'flex flex-1 flex-col gap-1.5 p-3';
     var title = document.createElement('h3');
-    title.className = 'line-clamp-2 text-sm font-semibold leading-snug text-[rgb(var(--fg))] group-hover:text-yellow-700 dark:text-[rgb(var(--fg))] dark:group-hover:text-yellow-300';
+    title.className = 'line-clamp-2 text-sm font-semibold leading-snug text-[rgb(var(--fg))] group-hover:text-blue-700 dark:text-[rgb(var(--fg))] dark:group-hover:text-sky-300';
     title.textContent = a.title || '(无标题)';
     body.appendChild(title);
 

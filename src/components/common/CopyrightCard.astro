@@ -25,7 +25,7 @@ const {
   <button
     id="copy-link-btn"
     title="复制链接"
-    class="absolute right-3 top-3 flex items-center gap-1 rounded-lg border border-[rgb(var(--card-border))] bg-[rgb(var(--card-bg))] px-2.5 py-1.5 text-xs text-[rgb(var(--fg-muted))] transition-colors hover:border-yellow-300 hover:text-yellow-600 dark:border-[rgb(var(--card-border))] dark:bg-[#1a1a1a] dark:text-[rgb(var(--fg-muted))] dark:hover:border-yellow-500 dark:hover:text-yellow-400"
+    class="absolute right-3 top-3 flex items-center gap-1 rounded-lg border border-[rgb(var(--card-border))] bg-[rgb(var(--card-bg))] px-2.5 py-1.5 text-xs text-[rgb(var(--fg-muted))] transition-colors hover:border-sky-400 hover:text-sky-700 dark:border-[rgb(var(--card-border))] dark:bg-[#0f172a] dark:text-[rgb(var(--fg-muted))] dark:hover:border-sky-400 dark:hover:text-sky-300"
   >
     <span>🔗</span>
     <span id="copy-link-label">复制链接</span>
@@ -33,7 +33,7 @@ const {
 
   <div class="font-bold pr-24 text-black/75 dark:text-white/75">{title}</div>
   {postUrl && (
-    <a href={postUrl} class="mt-1 block break-all text-yellow-700 underline underline-offset-2 dark:text-yellow-400">
+    <a href={postUrl} class="mt-1 block break-all text-blue-700 underline underline-offset-2 dark:text-sky-400">
       {postUrl}
     </a>
   )}
@@ -59,7 +59,7 @@ const {
       <a
         href={licenseUrl}
         target="_blank"
-        class="text-yellow-700 underline underline-offset-2 line-clamp-2 dark:text-yellow-400"
+        class="text-blue-700 underline underline-offset-2 line-clamp-2 dark:text-sky-400"
       >
         {licenseName || 'CC BY-NC-SA 4.0'}
       </a>
