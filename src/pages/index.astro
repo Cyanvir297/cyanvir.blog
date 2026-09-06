@@ -30,6 +30,15 @@ try {
   if (Array.isArray(parsed)) titleIcons = parsed.filter((it: any) => it && typeof it.icon === 'string');
 } catch {}
 
+// hero 打字机文案：取自 siteConfig.heroSentences，客户端洗牌后轮播（无 source 则不显示出处行）
+const heroSentences: { main: string; source: string; lines?: string[] }[] = siteConfig.heroSentences
+  .filter((s: any) => !!s && typeof s.main === 'string' && s.main.trim() !== '')
+  .map((s: any) => ({
+    main: s.main as string,
+    source: typeof s.source === 'string' ? s.source : '',
+    lines: Array.isArray(s.lines) ? s.lines : undefined,
+  }));
+
 
 const posts: Post[] = await getAllPosts();
 // 统计口径：包含 hide 隐藏文章（列表不显示但计数保留）
@@ -88,7 +97,7 @@ const latestPosts = posts.slice(0, 6);
       <h1 class="neon-text text-3xl sm:text-5xl font-extrabold tracking-tight text-white drop-shadow-lg">
         {siteTitle}
       </h1>
-      <p class="mt-4 text-base sm:text-lg text-white/85 min-h-[4.5rem]">
+      <p class="mx-auto mt-4 max-w-xl text-center text-base sm:text-lg text-white/85 min-h-[7rem]">
         <span id="typewriter-text" class="neon-text"></span><span id="typewriter-cursor" class="ml-1 animate-blink">|</span>
       </p>
       {
@@ -163,7 +172,7 @@ const latestPosts = posts.slice(0, 6);
     </div>
   </section>
 
-<script is:inline data-swup-reload-script>
+<script is:inline data-swup-reload-script define:vars={{ heroSentences }}>
   (function () {
     // 代次机制：每次脚本运行时递增，旧实例的回调发现代次不匹配就自动退出
     window.__twGen = (window.__twGen || 0) + 1;
@@ -172,13 +181,15 @@ const latestPosts = posts.slice(0, 6);
     var textEl = document.getElementById('typewriter-text');
     if (!textEl) return;
 
-    var TYPING_SPEED = 80;
-    var DELETING_SPEED = 40;
-    var PAUSE_AFTER_TYPE = 2500;
+    var SENTENCES = heroSentences;
+    var TYPING_SPEED = 120;
+    var DELETING_SPEED = 60;
+    var PAUSE_AFTER_TYPE = 3000;
     var PAUSE_BEFORE_START = 600;
 
     var mainText = '';
     var sourceText = '';
+    var mainLines = null;
     var displayMain = '';
     var displaySource = '';
     var phase = 'typing-main';
@@ -187,28 +198,67 @@ const latestPosts = posts.slice(0, 6);
       return window.__twGen !== myGen;
     }
 
-    async function fetchHitokoto() {
-      try {
-        var res = await fetch('https://v1.hitokoto.cn');
-        var data = await res.json();
-        return {
-          main: data.hitokoto || '活在珍贵的人间',
-          source: data.from ? '——出自 ' + data.from : '',
-        };
-      } catch (e) {
-        return [
-          { main: '活在珍贵的人间', source: '' },
-          { main: '探索技术的边界', source: '' },
-          { main: '记录生活的点滴', source: '' },
-        ][Math.floor(Math.random() * 3)];
+    // 兜底句：heroSentences 配置为空时用，避免首页空白
+    var FALLBACK_SENTENCES = [
+      { main: '活在珍贵的人间', source: '' },
+      { main: '探索技术的边界', source: '' },
+      { main: '记录生活的点滴', source: '' },
+    ];
+
+    // 播放队列：洗牌后依次取用，全部轮完才重新洗牌——避免删完立刻复读同一句
+    var playQueue = [];
+    var lastMain = typeof window.__twLastMain === 'string' ? window.__twLastMain : '';
+
+    function nextSentence() {
+      var pool = SENTENCES.length > 0 ? SENTENCES : FALLBACK_SENTENCES;
+      if (playQueue.length === 0) {
+        playQueue = pool.slice();
+        for (var i = playQueue.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var swap = playQueue[i];
+          playQueue[i] = playQueue[j];
+          playQueue[j] = swap;
+        }
       }
+      var pick = playQueue.shift();
+      // 队首正好是刚播完的那句（含软路由重跑时继承的上一句）时挪到队尾
+      if (pool.length > 1 && pick.main === lastMain) {
+        playQueue.push(pick);
+        pick = playQueue.shift();
+      }
+      lastMain = pick.main;
+      window.__twLastMain = pick.main;
+      return pick;
+    }
+
+    // 按预设的 lines 方案分行：有 lines 时按配置换行，无 lines 时整句一行
+    // text 是当前已打出的前缀，只在打到断点位置才插 <br>
+    function appendPoem(parent, text, lines) {
+      if (!lines || lines.length <= 1) {
+        if (text) parent.appendChild(document.createTextNode(text));
+        return;
+      }
+      var breakAt = {}, pos = 0, li;
+      for (li = 0; li < lines.length - 1; li++) {
+        pos += lines[li].length;
+        breakAt[pos] = true; // 1-indexed：第 pos 个字之后换行
+      }
+      var buf = '';
+      for (var i = 0; i < text.length; i++) {
+        buf += text.charAt(i);
+        if (breakAt[i + 1]) {
+          parent.appendChild(document.createTextNode(buf));
+          parent.appendChild(document.createElement('br'));
+          buf = '';
+        }
+      }
+      if (buf) parent.appendChild(document.createTextNode(buf));
     }
 
     function render() {
-      // 两段文案均来自第三方 hitokoto，用 textContent 写入避免 XSS
       textEl.textContent = '';
       var mainSpan = document.createElement('span');
-      mainSpan.textContent = displayMain;
+      appendPoem(mainSpan, displayMain, mainLines);
       textEl.appendChild(mainSpan);
       if (sourceText && displaySource.length > 0) {
         textEl.appendChild(document.createElement('br'));
@@ -252,6 +302,11 @@ const latestPosts = posts.slice(0, 6);
           render();
           window.__twTimer = setTimeout(tick, DELETING_SPEED);
         } else {
+          // 这一轮删完换下一句，而不是重复刚播过的那句
+          var next = nextSentence();
+          mainText = next.main;
+          sourceText = next.source;
+          mainLines = next.lines || null;
           displayMain = '';
           displaySource = '';
           phase = 'typing-main';
@@ -260,11 +315,11 @@ const latestPosts = posts.slice(0, 6);
       }
     }
 
-    async function init() {
-      var result = await fetchHitokoto();
-      if (isStale()) return;
+    function init() {
+      var result = nextSentence();
       mainText = result.main;
       sourceText = result.source;
+      mainLines = result.lines || null;
       displayMain = '';
       displaySource = '';
       phase = 'typing-main';
