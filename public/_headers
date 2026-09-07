@@ -1,0 +1,10 @@
+# GitHub Pages 自定义响应头（vercel.json 里的 headers 只在 Vercel 生效，
+# 走 Pages 时这些头不会下发，所以在这里镜像一份）
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

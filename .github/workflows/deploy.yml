@@ -44,6 +44,13 @@ jobs:
           SITE_URL: ${{ vars.SITE_URL }}
           ASTRO_BASE: ${{ vars.ASTRO_BASE }}
 
+      # 类型检查（先只报告不阻断）：当前有 187 个既有类型错误
+      # （其中 index.astro 的 152 个是模板里用了 React 风格 JSX 导致语言服务解析失败）。
+      # 全部修掉后把下面这行删掉，即可让类型错误阻断部署。
+      - name: Type check
+        run: pnpm check
+        continue-on-error: true
+
       - name: Create .nojekyll file
         run: touch dist/.nojekyll
 

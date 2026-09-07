@@ -8,6 +8,8 @@
     "dev": "astro dev --port 4321",
     "build": "astro build",
     "preview": "astro preview",
+    "check": "astro check",
+    "typecheck": "tsc --noEmit",
     "font:subset": "node scripts/subset-font.mjs"
   },
   "dependencies": {
@@ -31,7 +33,9 @@
     "tailwindcss": "^4.3.2"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
     "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3"
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^6.0.3"
   }
 }
