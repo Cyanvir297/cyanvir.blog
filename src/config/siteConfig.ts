@@ -6,7 +6,7 @@ export const siteConfig = {
   title: 'Cyanvir',
   // 站点正式域名，决定全站 canonical/og:url/sitemap/robots 的绝对地址。
   // 留空时回退 SITE_URL 环境变量，两者皆空为 localhost。
-  url: 'http://localhost:4321',
+  url: 'https://cyanvir.cc.cd',
   description: '一个使用 Astro构建的个人博客',
   // 站点图标（favicon/logo/OG 图共用）：src/assets 图片
   favicon: faviconImg,
@@ -37,7 +37,7 @@ linkMarkdown: `
 
 \`\`\`yaml
 name: 你的博客名
-url: http://localhost:4321
+url: https://cyanvir.cc.cd/
 description: 你的博客描述
 avatar: 你的头像图片地址
 screenshot: 你的截图地址
@@ -46,7 +46,7 @@ rss: 你的rss地址
 
 \`\`\`yaml
   站点名称：你的博客名
-  站点地址：http://localhost:4321
+  站点地址：https://cyanvir.cc.cd/
   头像链接：你的头像图片地址
   站点描述：你的博客描述
   站点截图：你的截图地址

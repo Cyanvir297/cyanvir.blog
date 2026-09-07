@@ -16,7 +16,7 @@ export const footerConfig = {
   dashboardBadges: [],
   // ICP 备案信息（仪表盘右侧可点击链接）
   icpConfig: {
-    name: '萌ICP备 20260240号',
-    link: 'https://icp.gov.moe/?keyword=20260240',
+    name: '萌ICP备20260297号',
+    link: 'https://icp.gov.moe/?keyword=20260297',
   } as { name: string; link: string },
 };
