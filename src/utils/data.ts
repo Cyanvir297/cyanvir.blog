@@ -39,8 +39,28 @@ function pickCoverApi(seed: string): string {
   return appendSeedParam(randomCoverImage.apis[0], getSeedHash(seed));
 }
 
+// 站点时区偏移（frontmatter 未写时区时按此解释）
+const SITE_TZ_OFFSET = '+08:00';
+
+// frontmatter 日期归一化：无时区标记时补上站点时区偏移。
+// JS 对无时区的日期串按「构建机本地时区」解析 —— 本地构建与 UTC CI（Vercel /
+// GitHub Actions）会解出相差 8 小时的结果，进而污染 JSON-LD datePublished、
+// article:published_time、sitemap lastmod、RSS pubDate。显式补偏移后即与构建机无关。
+// 非 ISO 形态（如 2026.09.03）原样返回，交由 toUnixSeconds 的 fallback 处理。
+function withSiteTz(value: string): string {
+  const v = String(value).trim();
+  if (!/^\d{4}-\d{2}-\d{2}/.test(v)) return v;
+  let out = v.replace(' ', 'T');
+  if (!/(?:Z|[+-]\d{2}:?\d{2})$/i.test(out)) {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(out)) out += 'T00:00:00';
+    out = out.replace(/T(\d):(\d{1,2})/, (_, h, mi) => `T0${h}:${mi.padStart(2, '0')}`);
+    out += SITE_TZ_OFFSET;
+  }
+  return out;
+}
+
 function toUnixSeconds(value: string, fallback: string): string {
-  const timestamp = new Date(value).getTime();
+  const timestamp = new Date(withSiteTz(value)).getTime();
   return Number.isFinite(timestamp) ? String(Math.floor(timestamp / 1000)) : fallback;
 }
 
@@ -58,7 +78,7 @@ function mapPost(entry: CollectionEntry<'posts'>): Post {
     const name = ts.trim();
     return { id: name, name, slug: name };
   });
-  const createdAt = String(Math.floor(new Date(d.date).getTime() / 1000));
+  const createdAt = String(Math.floor(new Date(withSiteTz(d.date)).getTime() / 1000));
   const updatedAt = d.updated ? toUnixSeconds(d.updated, createdAt) : createdAt;
   return {
     id: entry.id,

@@ -32,7 +32,9 @@ async function getFonts() {
   const out = { regular: null as Buffer | null, bold: null as Buffer | null };
   try {
     const subsetPath = './public/font/b.subset.woff2';
-    const fontPath = fs.existsSync(subsetPath) ? subsetPath : './public/font/b.woff2';
+    // 完整母版只用于构建期回退，不放进 public（否则 2.36MB 会随部署上传但无人请求）
+    const masterPath = './src/assets/font/b.woff2';
+    const fontPath = fs.existsSync(subsetPath) ? subsetPath : masterPath;
     const ttf = await woff2ToTtf(fs.readFileSync(fontPath));
     out.regular = ttf;
     out.bold = ttf; // 同一字体兼作粗体，避免依赖 Google Fonts
@@ -84,10 +86,12 @@ export async function GET({ props }: APIContext<{ post: Post }>): Promise<Respon
   const subtleColor = '#9ca3af';
   const backgroundColor = '#1a1b2e';
 
-  const pubDate = new Date(+post.createdAt * 1000).toLocaleDateString('en-US', {
+  // timeZone 显式指定，否则按构建机时区解析，UTC CI 上日期会偏一天
+  const pubDate = new Date(+post.createdAt * 1000).toLocaleDateString('zh-CN', {
     year: 'numeric',
-    month: 'short',
+    month: 'long',
     day: 'numeric',
+    timeZone: 'Asia/Shanghai',
   });
   const description = (post.excerpt || '').slice(0, 120);
 

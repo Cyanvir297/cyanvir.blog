@@ -1,7 +1,7 @@
 ---
 title: "Hello World"
 slug: "hello-world"
-date: "2026-09-03 00:00:00"
+date: "2026-09-03T00:00:00+08:00"
 tags: []
 ---
 

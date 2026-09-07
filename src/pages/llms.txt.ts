@@ -38,7 +38,13 @@ export async function GET(context: APIContext) {
   lines.push('');
   lines.push('## 内容索引');
   for (const p of posts) {
-    const date = new Date(+p.createdAt * 1000).toISOString().slice(0, 10);
+    // 用站点时区取「那一天」，否则 toISOString 给的是 UTC 日，凌晨发布的文章会早一天
+    const date = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Shanghai',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date(+p.createdAt * 1000));
     const cat = p.category?.name ? `【${p.category.name}】` : '';
     const excerpt = p.excerpt ? cleanExcerpt(p.excerpt) : '';
     const desc = `${date} ${cat}${excerpt}`.trim();
