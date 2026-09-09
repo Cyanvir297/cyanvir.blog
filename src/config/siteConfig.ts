@@ -18,7 +18,6 @@ export const siteConfig = {
 		"AI",
 		"Astro",
 		"博客",
-		"hexo",
 		"静态博客",
 	],
   // SEO：每篇文章构建期生成 1200×630 OG 分享图（satori + sharp）

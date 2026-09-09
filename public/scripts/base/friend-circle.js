@@ -1,12 +1,15 @@
 /* 朋友圈 / 友链检测
-   数据源：Friend-Circle-Lite（fc.mccsjs.cn）
-   - /fc 页：拉 all.json 渲染朋友圈文章卡片
-   - /link 页：拉 link.json 渲染友链可达性胶囊
-   BaseLayout 常驻加载，监听 swup:page-view / astro:page-load 跨切页初始化 */
+   数据源：Friend-Circle-Lite —— 已停用，不再向原作者服务器请求数据。
+   - /fc 页：拉 all.json 渲染朋友圈文章卡片（已停用）
+   - /link 页：拉 link.json 渲染友链可达性胶囊（已停用）
+   BaseLayout 常驻加载，监听 swup:page-view / astro:page-load 跨切页初始化。
+   启用方法：把 API_DEFAULT 或 siteConfig.friendCircleApi 设成你自己的 Friend-Circle-Lite 地址，
+   并恢复 fetchJson 里被注释掉的 fetch 调用。 */
 (function () {
   'use strict';
 
-  var API_DEFAULT = 'https://fc.mccsjs.cn/';
+  // 原：var API_DEFAULT = 'https://fc.mccsjs.cn/';
+  var API_DEFAULT = '';
   var TTL = 5 * 60 * 1000; // 数据缓存 5 分钟
   var PAGE_SIZE = 15; // 朋友圈每页数量
   var cache = {};
@@ -20,10 +23,13 @@
   }
 
   function fetchJson(url) {
-    return fetch(url, { credentials: 'omit' }).then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    });
+    // 原实现（已注释：不再向第三方服务器发请求）
+    // return fetch(url, { credentials: 'omit' }).then(function (r) {
+    //   if (!r.ok) throw new Error('HTTP ' + r.status);
+    //   return r.json();
+    // });
+    // 直接 reject，让 initCircle / initPills 的 catch 分支接管，页面结构保持不变
+    return Promise.reject(new Error('数据源已停用'));
   }
 
   function getJson(key, file) {
@@ -176,7 +182,8 @@
       if (!articles.length && statsEl) statsEl.innerHTML = '暂时没有朋友圈文章';
       renderMore();
     }).catch(function () {
-      if (statsEl) statsEl.innerHTML = '加载失败，请稍后重试';
+      // 数据源是主动停用的，不是故障，文案不能提示"重试"
+      if (statsEl) statsEl.innerHTML = '朋友圈数据源已停用';
     });
   }
 

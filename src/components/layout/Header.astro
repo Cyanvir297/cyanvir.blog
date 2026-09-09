@@ -1,5 +1,6 @@
 ---
 import type { MenuItem } from '../../types';
+import { siteConfig } from '../../config/siteConfig';
 import MenuIcon from './MenuIcon.astro';
 import ImageWrapper from '../common/ImageWrapper.astro';
 
@@ -11,7 +12,7 @@ interface Props {
   aggregateMenus?: MenuItem[];
 }
 
-const { siteTitle = 'mccsjs', siteLogo = '', favicon = '', menus = [], aggregateMenus = [] } = Astro.props;
+const { siteTitle = siteConfig.title, siteLogo = '', favicon = '', menus = [], aggregateMenus = [] } = Astro.props;
 
 const visibleMenus = menus.filter((m) => m.visible);
 const visibleAggregateMenus = aggregateMenus.filter((m) => m.visible && m.children?.length);

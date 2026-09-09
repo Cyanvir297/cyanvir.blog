@@ -9,7 +9,7 @@ import { renderMarkdown } from '../../utils/markdown';
 import { siteConfig } from '../../config/siteConfig';
 
 const settings = getSiteSettings();
-const siteTitle = settings.siteTitle || 'My Blog';
+const siteTitle = settings.siteTitle || siteConfig.title;
 const siteLogo = settings.siteLogo || '';
 
 // 将相对路径转成绝对 URL（供 JSON-LD 的 image / publisher.logo 使用）

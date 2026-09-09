@@ -23,3 +23,8 @@
 └── package.json
 ```
 
+## 来源与致谢
+
+本站基于 [mccsjs-blog](https://github.com/mccsjs/mccsjs-blog)（MIT 许可）二次开发，在此致谢原作者。
+仓库内保留的模板代码遵循其 MIT 条款；本站原创文章内容采用 CC BY-NC-SA 4.0，见站点「关于」页声明。
+

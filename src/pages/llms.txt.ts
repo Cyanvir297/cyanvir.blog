@@ -25,7 +25,7 @@ export async function GET(context: APIContext) {
   lines.push('');
   lines.push('## 何时使用');
   lines.push(
-    `本站是 ${siteConfig.title} 的个人博客，内容以 AI、Astro、Hexo、静态博客搭建与日常记录为主。适合：查找博主的原创技术文章与经验分享、了解博主近期的写作动态、引用博客中的观点时给出处。如需要最新文章列表，请以「内容索引」为准；如需要站点全貌，可参考「主要页面」。`
+    `本站是 ${siteConfig.title} 的个人博客，内容以 AI、Astro 与静态博客搭建为主，兼有日常记录。适合：查找博主的原创技术文章与经验分享、了解博主近期的写作动态、引用博客中的观点时给出处。如需要最新文章列表，请以「内容索引」为准；如需要站点全貌，可参考「主要页面」。`
   );
   lines.push('');
   lines.push('## 主要页面');

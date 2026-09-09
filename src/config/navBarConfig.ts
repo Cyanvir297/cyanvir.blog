@@ -58,11 +58,10 @@ export const navBarConfig: { nav: NavItemConfig[]; group: GroupMenuConfig[] } = 
   group: [
     {
       id: 'group-mysite',
-      label: '我的网站',
+      label: '个人相关',
       children: [
-        { id: 'ms-home', label: '个人主页', href: 'https://seln.cn/', icon: 'https://hexo.seln.cn/img/fox.png', target: '_blank' },
-        { id: 'ms-blog', label: '博客', href: 'https://mccsjs.cn/', icon: 'https://mccsjs.cn/img/ico.jpg', target: '_blank' },
-        { id: 'ms-linkcheck', label: '友链检测', href: 'https://fc.mccsjs.cn/', icon: 'https://fc.mccsjs.cn/favicon.ico', target: '_blank' },
+        { id: 'ms-github', label: 'GitHub', href: 'https://github.com/Cyanvir297', icon: 'line-md:github-twotone', target: '_blank' },
+        { id: 'ms-bili', label: 'B站', href: 'https://space.bilibili.com/2025605944', icon: 'thesvg-color:bilibili', target: '_blank' },
       ],
     },
   ],

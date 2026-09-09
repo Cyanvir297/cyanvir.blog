@@ -4,8 +4,9 @@ import TabNav from '../components/layout/TabNav.astro';
 import { getSiteSettings } from '../utils/data';
 
 const settings = getSiteSettings();
-// 朋友圈数据源（Friend-Circle-Lite），供常驻脚本读 all.json 渲染文章流
-const fcApi = settings.friendCircleApi || 'https://fc.mccsjs.cn/';
+// 朋友圈数据源（Friend-Circle-Lite）已停用：不再回退到原作者服务器。
+// 原：const fcApi = settings.friendCircleApi || 'https://fc.mccsjs.cn/';
+const fcApi = settings.friendCircleApi || '';
 ---
 
 <BaseLayout title="朋友圈" wide description="友情链接 — 有趣的人与站点，欢迎交换友链">

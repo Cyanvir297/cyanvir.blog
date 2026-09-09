@@ -22,8 +22,9 @@ interface FriendGroup {
 
 const settings = getSiteSettings();
 const linkMarkdown = settings.linkMarkdown || '';
-// 友链检测数据源（Friend-Circle-Lite），供常驻脚本读 link.json 填充胶囊
-const fcApi = settings.friendCircleApi || 'https://fc.mccsjs.cn/';
+// 友链检测数据源（Friend-Circle-Lite）已停用：不再回退到原作者服务器。
+// 原：const fcApi = settings.friendCircleApi || 'https://fc.mccsjs.cn/';
+const fcApi = settings.friendCircleApi || '';
 
 // 本地友链数据按类型分组
 const allFriends = getFriends();
