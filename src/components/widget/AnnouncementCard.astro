@@ -59,8 +59,8 @@ const hostOf = (u: string) => u.replace(/^https?:\/\//, '');
 
 <script>
   const KEY = 'SENBZ-SVWCN-T7BFI-SNWQJ-TQBLE-GDBTJ';
-  // 站长坐标（南京），用于计算访客距离；按需改成你的坐标
-  const HOME = { lng: 118.59232127, lat: 32.78868157 };
+  // 站长坐标，用于计算访客距离
+  const HOME = { lng: 116.811332, lat: 36.558363 };
   // 缓存 key 带版本，欢迎逻辑改动后旧缓存自动失效（避免浏览器 sessionStorage 残留旧文案）
   const CACHE_KEY = 'welcome-info-v4';
 
