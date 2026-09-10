@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import EmailLink from '../components/common/EmailLink.astro';
 import { siteConfig } from '../utils/data';
 
 const socials = siteConfig.author?.socials ?? [];
@@ -16,7 +17,7 @@ const email = socials.find((s) => s.url.startsWith('mailto:'))?.url;
     <h2>邮箱</h2>
     <p>
       最可靠的联系方式是电子邮件：
-      {email ? <a href={email}>{email.replace('mailto:', '')}</a> : '见页脚联系方式'}。
+      {email ? <EmailLink to={email} /> : '见页脚联系方式'}。
       无论是友链申请、技术交流还是文章勘误，都欢迎来信。我一般会在 1~3 天内回复，邮件请尽量说明来意，
       方便我第一时间处理。
     </p>

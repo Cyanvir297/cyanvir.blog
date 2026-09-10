@@ -3,7 +3,7 @@ import path from 'node:path';
 import { createFont, woff2 } from 'fonteditor-core';
 
 const projectRoot = process.cwd();
-const sourceFont = path.join(projectRoot, 'public', 'font', 'b.woff2');
+const sourceFont = path.join(projectRoot, 'src', 'assets', 'font', 'b.woff2');
 const subsetFont = path.join(projectRoot, 'public', 'font', 'b.subset.woff2');
 
 // 仅收集会实际显示为站点文案的文件；评论、留言等访客输入由 CSS fallback 字体承接。

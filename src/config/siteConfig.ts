@@ -22,8 +22,6 @@ export const siteConfig = {
 	],
   // SEO：每篇文章构建期生成 1200×630 OG 分享图（satori + sharp）
   generateOgImages: true,
-  // 友链检测 / 朋友圈数据源（Friend-Circle-Lite）
-  //friendCircleApi: 'https://fc.mccsjs.cn/',
   // 友链页 markdown 区块
 linkMarkdown: `
 ## 添加友链前，确保您符合以下条件
@@ -65,6 +63,7 @@ rss: 你的rss地址
     // icon 支持：内置名 github/wechat/qq/bilibili/email/rss/twitter；
     // 或本地图片路径 /images/social/xxx.svg；或完整 URL
     socials: [
+      { name: '邮箱', url: 'mailto:2201599491@qq.com', icon: 'email' },
       { name: 'GitHub', url: 'https://github.com/Cyanvir297', icon: 'line-md:github-twotone' },
       { name: 'Bilibili', url: 'https://space.bilibili.com/2025605944', icon: 'thesvg-color:bilibili' },
     ],
@@ -94,6 +93,14 @@ rss: 你的rss地址
     { main: '如果冬天总会过去，如果春天总会到来，那我祝愿这个世界所有人可择一良人，可寻一安身之所，冬至有饺子，端午有粽子，中秋有月饼。',
       lines: ['如果冬天总会过去，如果春天总会到来，', '那我祝愿这个世界所有人可择一良人，可寻一安身之所，', '冬至有饺子，端午有粽子，中秋有月饼。'] },
   ],
+  // 侧栏公告卡「IP 定位 + 距站长距离」
+  // mapKey: 腾讯位置服务 Web 服务 key（https://lbs.qq.com/dev/console/application/mine ）。
+  // 留空则不发起定位请求、直接走欢迎语兜底。
+  // 参考应用域名白名单需包含本站域名，否则返回 status 110（来源域名未授权）；
+  // key 停用或每日配额耗尽返回 121 / JSONP 失败。
+  mapKey: 'SENBZ-SVWCN-T7BFI-SNWQJ-TQBLE-GDBTJ',
+  // 站长坐标（用于"距离站长约 N 公里"），GCJ02 经纬度
+  mapHome: { lng: 116.811332, lat: 36.558363 },
   // 侧栏公告卡：域名信息（逐行展示，label 后接可点击域名）
   announcementLinks: [],
   // 侧栏公告卡附加正文（支持简单 HTML），可选；不填则不显示

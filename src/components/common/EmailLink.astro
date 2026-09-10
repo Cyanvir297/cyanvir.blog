@@ -1,0 +1,51 @@
+---
+// 反爬邮箱链接
+//
+// 静态 HTML 里不出现完整地址，避免被爬虫正则（[\w.+-]+@[\w-]+\.[\w]+）直接抓走：
+//   1. 地址拆成 local / domain 两段存进 data-*，href 由下方脚本在客户端拼出
+//   2. 可见文案用 HTML 实体输出（@ → &#64;、. → &#46;），浏览器渲染成完整地址，
+//      但按原始 HTML 做正则匹配的抓取脚本匹配不到字面的 @ 和 .
+//
+// 代价：href 需要 JS 执行后才生效。无 JS 时链接不可点（本站本身重度依赖 JS：
+// Swup、评论、搜索索引都是客户端跑的），故此处不做无 JS 降级。
+// 用无头浏览器渲染后再抓的爬虫仍能拿到地址——那种采集成本远高于普通爬虫，不在防御范围内。
+interface Props {
+  to: string; // 形如 "user@example.com"，或 "mailto:user@example.com"
+  class?: string;
+  ariaLabel?: string;
+}
+
+const { to, class: className = '', ariaLabel = '' } = Astro.props;
+
+const bare = to.replace(/^mailto:/i, '');
+const [local, domain] = bare.split('@');
+
+// 可见文案：保留 local 原样，@ 与 . 换成实体
+const label = local && domain ? `${local}&#64;${domain.replace(/\./g, '&#46;')}` : '';
+---
+
+<a
+  data-email-local={local || ''}
+  data-email-domain={domain || ''}
+  aria-label={ariaLabel || undefined}
+  class:list={['email-link', className]}
+>
+  <slot>{label && <span set:html={label} />}</slot>
+</a>
+
+<script>
+  function bindEmailLinks(): void {
+    document.querySelectorAll<HTMLAnchorElement>('a.email-link').forEach((el) => {
+      const local = el.dataset.emailLocal || '';
+      const domain = el.dataset.emailDomain || '';
+      if (local && domain) {
+        el.href = 'mailto:' + local + '@' + domain;
+      }
+    });
+  }
+
+  bindEmailLinks();
+  // Swup 切页后新 DOM 里的链接需要重新绑定；astro:page-load 兜底 Astro 原生 ClientRouter 场景
+  document.addEventListener('astro:page-load', bindEmailLinks);
+  document.addEventListener('swup:page-view', bindEmailLinks);
+</script>

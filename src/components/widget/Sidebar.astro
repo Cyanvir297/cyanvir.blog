@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import SiteInfoCard from './SiteInfoCard.astro';
 import AnnouncementCard from './AnnouncementCard.astro';
 import SocialIcon from '../common/SocialIcon.astro';
+import EmailLink from '../common/EmailLink.astro';
 import { siteConfig } from '../../config/siteConfig';
 
 interface Props {
@@ -24,6 +25,8 @@ const author = {
   socials: (siteConfig.author?.socials || []).filter((s) => s.url && s.icon),
 };
 const initials = (author.name || '光').trim().charAt(0);
+const socialLinkClass =
+  'group inline-flex items-center justify-center text-[rgb(var(--fg-soft))] transition-colors hover:text-[rgb(var(--primary))]';
 ---
 
 <aside class="flex flex-col gap-5">
@@ -75,17 +78,23 @@ const initials = (author.name || '光').trim().charAt(0);
       {
         author.socials.length > 0 && (
           <div class="mt-4 flex flex-wrap items-center justify-center gap-4">
-            {author.socials.map((s) => (
-              <a
-                href={s.url}
-                target={s.url.startsWith('mailto:') || s.url.startsWith('#') ? undefined : '_blank'}
-                rel={s.url.startsWith('mailto:') || s.url.startsWith('#') ? undefined : 'noopener noreferrer'}
-                aria-label={s.name}
-                class="group inline-flex items-center justify-center text-[rgb(var(--fg-soft))] transition-colors hover:text-[rgb(var(--primary))]"
-              >
-                <SocialIcon name={s.name} icon={s.icon} class="h-8 w-8" />
-              </a>
-            ))}
+            {author.socials.map((s) =>
+              s.url.startsWith('mailto:') ? (
+                <EmailLink to={s.url} ariaLabel={s.name} class={socialLinkClass}>
+                  <SocialIcon name={s.name} icon={s.icon} class="h-8 w-8" />
+                </EmailLink>
+              ) : (
+                <a
+                  href={s.url}
+                  target={s.url.startsWith('#') ? undefined : '_blank'}
+                  rel={s.url.startsWith('#') ? undefined : 'noopener noreferrer'}
+                  aria-label={s.name}
+                  class={socialLinkClass}
+                >
+                  <SocialIcon name={s.name} icon={s.icon} class="h-8 w-8" />
+                </a>
+              )
+            )}
           </div>
         )
       }

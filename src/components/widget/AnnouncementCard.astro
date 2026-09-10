@@ -3,6 +3,8 @@ import { siteConfig } from '../../config/siteConfig';
 
 const announcement = siteConfig.announcement || '';
 const links = siteConfig.announcementLinks || [];
+const mapKey = siteConfig.mapKey || '';
+const mapHome = siteConfig.mapHome;
 const hostOf = (u: string) => u.replace(/^https?:\/\//, '');
 ---
 
@@ -40,7 +42,12 @@ const hostOf = (u: string) => u.replace(/^https?:\/\//, '');
       )
     }
 
-    <div id="welcome-info" class="break-words rounded-[18px] p-2 text-sm leading-relaxed text-[rgb(var(--fg))]">
+    <div
+      id="welcome-info"
+      data-map-key={mapKey}
+      data-map-home={JSON.stringify(mapHome)}
+      class="break-words rounded-[18px] p-2 text-sm leading-relaxed text-[rgb(var(--fg))]"
+    >
       <div class="text-center text-[rgb(var(--fg-soft))]">正在获取信息…</div>
     </div>
   </div>
@@ -58,9 +65,10 @@ const hostOf = (u: string) => u.replace(/^https?:\/\//, '');
 </style>
 
 <script>
-  const KEY = 'SENBZ-SVWCN-T7BFI-SNWQJ-TQBLE-GDBTJ';
-  // 站长坐标，用于计算访客距离
-  const HOME = { lng: 116.811332, lat: 36.558363 };
+  // key 与站长坐标挂在 #welcome-info 的 data-* 上（见上方模板）。
+  // 刻意不用 define:vars：那会把整个 script 降级成 inline JS，下面所有 TS 类型标注都会报 ts(8010)。
+  let KEY = '';
+  let HOME = { lng: 0, lat: 0 };
   // 缓存 key 带版本，欢迎逻辑改动后旧缓存自动失效（避免浏览器 sessionStorage 残留旧文案）
   const CACHE_KEY = 'welcome-info-v4';
 
@@ -132,17 +140,52 @@ const hostOf = (u: string) => u.replace(/^https?:\/\//, '');
     });
   }
 
+  // 同一次会话只发一次定位请求：脚本首次执行与 swup:page-view / astro:page-load 可能并发，
+  // 复用同一个 promise，避免重复 JSONP 白白消耗 key 配额；网络失败时清掉以便下次导航重试
+  let locationPromise: Promise<any> | null = null;
+  function getLocation(): Promise<any> {
+    if (!locationPromise) {
+      locationPromise = fetchIpLocation().catch((err) => {
+        locationPromise = null;
+        throw err;
+      });
+    }
+    return locationPromise;
+  }
+
+  // 从 #welcome-info 的 data-* 读 key 与站长坐标。
+  // Swup 切页时该元素会被重建，所以每次渲染都重读，而不是只在模块加载时读一次。
+  function readMapConfig(el: HTMLElement): void {
+    KEY = el.dataset.mapKey || '';
+    try {
+      const parsed = JSON.parse(el.dataset.mapHome || '');
+      if (parsed && typeof parsed.lng === 'number' && typeof parsed.lat === 'number') {
+        HOME = { lng: parsed.lng, lat: parsed.lat };
+      }
+    } catch {
+      // data-map-home 解析失败时保留默认值
+    }
+  }
+
   async function renderWelcomeInfo() {
     const el = document.getElementById('welcome-info');
     if (!el) return;
+    readMapConfig(el);
+    // 未配置 mapKey：不向腾讯地图发请求（否则每次翻页都打一次必然失败的 JSONP），直接兜底
+    if (!KEY) {
+      el.innerHTML = fallbackWelcomeHtml();
+      return;
+    }
     const cached = sessionStorage.getItem(CACHE_KEY);
     if (cached) {
       el.innerHTML = cached;
       return;
     }
     try {
-      const data = await fetchIpLocation();
+      const data = await getLocation();
       if (data.status !== 0 || !data.result) {
+        // 常见错误码：110 = 来源域名未授权（referer 白名单不含当前域名），121 = 该 key 每日配额已用尽
+        console.warn('[AnnouncementCard] IP 定位失败:', data.status, data.message);
         el.innerHTML = fallbackWelcomeHtml();
         return;
       }

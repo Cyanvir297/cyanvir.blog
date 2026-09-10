@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import VisitorStats from '../components/widget/VisitorStats.astro';
+import EmailLink from '../components/common/EmailLink.astro';
 import { siteConfig } from '../utils/data';
 
 const author = siteConfig.author;
@@ -31,7 +32,11 @@ const keywords = siteConfig.keywords?.join('、') || '';
     <ul>
       {socials.map((s) => (
         <li>
-          <a href={s.url} target="_blank" rel="noopener noreferrer">{s.name}</a>
+          {s.url.startsWith('mailto:') ? (
+            <EmailLink to={s.url}>{s.name}</EmailLink>
+          ) : (
+            <a href={s.url} target="_blank" rel="noopener noreferrer">{s.name}</a>
+          )}
         </li>
       ))}
     </ul>

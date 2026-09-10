@@ -4,8 +4,7 @@ import TabNav from '../components/layout/TabNav.astro';
 import { getSiteSettings } from '../utils/data';
 
 const settings = getSiteSettings();
-// 朋友圈数据源（Friend-Circle-Lite）已停用：不再回退到原作者服务器。
-// 原：const fcApi = settings.friendCircleApi || 'https://fc.mccsjs.cn/';
+// 朋友圈数据源（Friend-Circle-Lite）已停用：不再回退到上游模板作者的服务器。
 const fcApi = settings.friendCircleApi || '';
 ---
 

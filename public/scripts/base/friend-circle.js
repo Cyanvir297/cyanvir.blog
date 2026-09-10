@@ -8,7 +8,6 @@
 (function () {
   'use strict';
 
-  // 原：var API_DEFAULT = 'https://fc.mccsjs.cn/';
   var API_DEFAULT = '';
   var TTL = 5 * 60 * 1000; // 数据缓存 5 分钟
   var PAGE_SIZE = 15; // 朋友圈每页数量

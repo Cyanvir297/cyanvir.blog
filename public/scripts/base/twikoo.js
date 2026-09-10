@@ -19,7 +19,10 @@ import { registerInit } from './registry.js';
   function initTwikooComments() {
     var el = document.getElementById('tcomment');
     if (!el) return; // 当前页面没有评论区
-    var envId = el.getAttribute('data-twikoo-env-id') || 'https://twikoo.mccsjs.cn';
+    // 不设兜底实例：envId 缺失时直接不初始化，而不是指向某个固定服务器。
+    // 原先兜底到上游模板作者的 Twikoo 实例——一旦配置被清空成空串，评论会发往他人服务器。
+    var envId = el.getAttribute('data-twikoo-env-id');
+    if (!envId) return;
 
     // 清理旧实例和容器
     if (typeof twikoo !== 'undefined') {
