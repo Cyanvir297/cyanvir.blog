@@ -50,7 +50,7 @@ rss: 你的rss地址
   RSS: 你的rss地址
 \`\`\`
 `,
-  // hero（src/assets/images）
+  // hero（src/assets/images）；已由 JPEG 转码为 WebP（sharp，quality 80），扩展名与内容一致
   heroImage: 'images/hero.webp',
   // 管理员（关于页标识）
   // 分类与标签：不再手写配置，由文章 frontmatter 自动聚合（见 utils/data.ts 的 getCategories/getTags）

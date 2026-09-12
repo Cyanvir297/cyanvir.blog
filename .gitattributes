@@ -1,0 +1,33 @@
+# 行尾统一。没有这份文件时 core.autocrlf=true 会自己决定行尾，于是同一个文件在
+# 不同机器 / 不同工具写入后行尾不一致，git status 会反复把它标成已修改（内容其实
+# 一字未变 —— 典型受害者是 pnpm-lock.yaml，见 2026-09 的一次幽灵 diff）。
+#
+# 本仓库 blob 里存的一直是 LF，这里显式声明，让任何机器检出都拿到 LF，
+# .gitattributes 优先级高于 core.autocrlf，所以不会再被本机设置覆盖。
+* text=auto eol=lf
+
+# 二进制：不能被当文本处理（否则 diff 炸、行尾"归一化"会损坏文件）
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.webp      binary
+*.avif      binary
+*.ico       binary
+*.svg       binary
+*.woff      binary
+*.woff2     binary
+*.ttf       binary
+*.otf       binary
+*.eot       binary
+*.mp4       binary
+*.webm      binary
+*.mp3       binary
+*.zip       binary
+*.tar       binary
+*.gz        binary
+*.tgz       binary
+*.db        binary
+*.sqlite    binary
+*.db-wal    binary
+*.db-shm    binary
