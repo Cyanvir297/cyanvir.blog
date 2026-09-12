@@ -3,8 +3,10 @@
    - /fc 页：拉 all.json 渲染朋友圈文章卡片（已停用）
    - /link 页：拉 link.json 渲染友链可达性胶囊（已停用）
    BaseLayout 常驻加载，监听 swup:page-view / astro:page-load 跨切页初始化。
-   启用方法：把 API_DEFAULT 或 siteConfig.friendCircleApi 设成你自己的 Friend-Circle-Lite 地址，
-   并恢复 fetchJson 里被注释掉的 fetch 调用。 */
+   启用方法：把下面的 API_DEFAULT 设成你自己的 Friend-Circle-Lite 地址，
+   并恢复 fetchJson 里被注释掉的 fetch 调用。
+   （早期版本还支持 siteConfig.friendCircleApi 配置项，静态化后已删除；
+     也可改用页面元素上的 data-api 属性，见 fc.astro 与 link.astro） */
 (function () {
   'use strict';
 

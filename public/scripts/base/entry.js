@@ -11,6 +11,9 @@ let initGeneration = 0;
 async function initializePage() {
   const generation = ++initGeneration;
   const loads = [];
+  // 首页 hero 打字机：hero.js 通过 registerInit 自注册，下方的 runInits() 会调到它；
+  // 不在首页时 #typewriter-text 不存在，脚本自己 return，所以不必单独判代次。
+  if (document.querySelector('#typewriter-text')) loads.push(import('./hero.js'));
   if (document.querySelector('.post-content')) loads.push(import('./post.js'));
   if (document.querySelector('#link-markdown-section')) loads.push(import('./codeblocks.js'));
   if (document.querySelector('#tcomment')) loads.push(import('./twikoo.js'));

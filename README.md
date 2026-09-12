@@ -23,6 +23,13 @@
 └── package.json
 ```
 
+## 脚本
+
+| 脚本 | 覆盖范围 | 用途 |
+| --- | --- | --- |
+| `pnpm check` | 全部 `.astro` + `.ts` + `.tsx` | **主力类型检查**。`tsc` 不支持 `.astro` 扩展名，所以 BaseLayout、各页面、大部分组件只能靠它查。会自动生成 `.astro/types.d.ts` 与 `.astro/content.d.ts`，不需要额外的 `astro sync` 步骤。CI 用的就是它。 |
+| `pnpm typecheck` | 仅 `.ts` + `.tsx` | `.astro` 不在 `tsc` 支持列表里会被**静默跳过**，所以它查不到任何 `.astro` 文件的错误。保留它作为纯 TS 的快速检查（数据层、配置层），但**不能**把它通过当作全站类型安全的依据。 |
+
 ## 来源与致谢
 
 本站基于 [mccsjs-blog](https://github.com/mccsjs/mccsjs-blog)（MIT 许可）二次开发，在此致谢原作者。

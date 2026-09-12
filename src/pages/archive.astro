@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TabNav from '../components/layout/TabNav.astro';
 import type { Post } from '../types';
-import { getAllPosts } from '../utils/data';
+import { getAllPosts, formatDate, formatYear, SITE_TZ } from '../utils/data';
 
 // 归档每页固定 10 篇，超过自动分页
 const PER_PAGE = 10;
@@ -16,7 +16,7 @@ const sorted = posts
 
 const totalPages = Math.max(1, Math.ceil(sorted.length / PER_PAGE));
 const grouped = sorted.reduce<Record<string, Post[]>>((acc, post) => {
-  const year = new Date(+post.createdAt * 1000).getFullYear().toString();
+  const year = formatYear(post.createdAt);
   if (!acc[year]) acc[year] = [];
   acc[year].push(post);
   return acc;
@@ -27,18 +27,15 @@ const years = Object.keys(grouped).sort((a, b) => +b - +a);
 // 首屏 SSR 只渲染第 1 页，避免 JS 初始化全量替换造成闪烁
 const pagedPosts = sorted.slice(0, PER_PAGE);
 const pagedGrouped = pagedPosts.reduce<Record<string, Post[]>>((acc, post) => {
-  const year = new Date(+post.createdAt * 1000).getFullYear().toString();
+  const year = formatYear(post.createdAt);
   if (!acc[year]) acc[year] = [];
   acc[year].push(post);
   return acc;
 }, {});
 const pagedYears = Object.keys(pagedGrouped).sort((a, b) => +b - +a);
 
-const formatMonthDay = (date: string) =>
-  new Date(+date * 1000).toLocaleDateString('zh-CN', {
-    month: '2-digit',
-    day: '2-digit',
-  });
+// 月/日：首屏 SSR 与下方分页脚本用同一格式，翻页时日期样式不会突变
+const formatMonthDay = (date: string) => formatDate(date, { month: '2-digit', day: '2-digit' });
 
 // 分页脚本只需要这些索引字段；不要把每篇文章的完整 Markdown 一起塞进首屏 HTML。
 const serializedPosts = JSON.stringify(sorted.map((post) => ({
@@ -162,9 +159,8 @@ const serializedTotalPages = JSON.stringify(totalPages);
 </BaseLayout>
 
 <!-- Swup 切换到归档页时也要重新绑定分页按钮事件。 -->
-<script data-swup-reload-script define:vars={{ serializedPosts, serializedTotalPages, serializedPerPage: JSON.stringify(PER_PAGE) }}>
+<script data-swup-reload-script define:vars={{ serializedPosts, serializedTotalPages, serializedPerPage: JSON.stringify(PER_PAGE), siteTz: SITE_TZ }}>
   const archiveRoot = document.getElementById('archive-root');
-  if (archiveRoot) archiveRoot.dataset.archiveInlineReady = '1';
   const posts = JSON.parse(serializedPosts || '[]');
   const totalPages = Number(serializedTotalPages) || 1;
   const perPage = Number(serializedPerPage) || 10;
@@ -179,11 +175,19 @@ const serializedTotalPages = JSON.stringify(totalPages);
     throw new Error('缺少归档页分页元素');
   }
 
-  function formatMonthDay(date) {
-    const d = new Date(+date * 1000);
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${month}-${day}`;
+  // 客户端格式化：必须钉站点时区，否则跨时区访客看到的日期会和首屏 SSR 差一天；
+  // 分隔符也要跟 SSR 一致（zh-CN 是 / —— 原先这里用 '-' 手拼，翻页后日期格式会突变）。
+  function formatYearOf(ts) {
+    return new Intl.DateTimeFormat('en-CA', { year: 'numeric', timeZone: siteTz }).format(
+      new Date(+ts * 1000),
+    );
+  }
+  function formatMonthDay(ts) {
+    return new Intl.DateTimeFormat('zh-CN', {
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: siteTz,
+    }).format(new Date(+ts * 1000));
   }
 
   function escapeHtml(value) {
@@ -201,7 +205,7 @@ const serializedTotalPages = JSON.stringify(totalPages);
     const paged = posts.slice(start, start + perPage);
 
     const grouped = paged.reduce((acc, post) => {
-      const year = new Date(+post.createdAt * 1000).getFullYear().toString();
+      const year = formatYearOf(post.createdAt);
       if (!acc[year]) acc[year] = [];
       acc[year].push(post);
       return acc;
@@ -275,4 +279,8 @@ const serializedTotalPages = JSON.stringify(totalPages);
 
   // 初始化：同步分页按钮状态与页码信息
   renderPage(1);
+
+  // 完成之后才宣告。兜底脚本 public/scripts/base/archive.js 的 initArchive 看到
+  // 此标记即跳过；若本脚本未被 Swup 重新执行（或未跑到这里），标记缺失，兜底接手。
+  if (archiveRoot) archiveRoot.dataset.archiveInlineReady = '1';
 </script>

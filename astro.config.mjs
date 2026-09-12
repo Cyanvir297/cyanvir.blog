@@ -40,7 +40,14 @@ export default defineConfig({
       updateHead: { persistAssets: true },
       updateBodyClass: false,
       globalInstance: true,
+      // 下面是两处 @swup/astro 上游类型缺陷，运行时行为都正确，故用 @ts-expect-error 压掉：
+      // 1. reloadScripts 被误标为 boolean，实际透传给 @swup/scripts-plugin，
+      //    支持 { head, body, optin } 对象形式（默认值 {head:true,body:true,optin:false}）。
+      // 2. resolveUrl 是 swup 的合法选项，但 Options 类型里漏掉了它。
+      //    保持恒等映射很重要：设了 ASTRO_BASE 子路径时不能让它走 swup 默认的 base 解析。
+      // @ts-expect-error @swup/astro 上游类型缺陷（1）
       reloadScripts: { optin: true },
+      // @ts-expect-error @swup/astro 上游类型缺陷（2）
       resolveUrl: (url) => url,
       animateHistoryBrowsing: false,
       // 留言板是重 React 应用，Swup 切页时 Astro island 不会重新 hydrate（reloadScripts optin

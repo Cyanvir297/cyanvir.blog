@@ -1,6 +1,7 @@
 ---
 import type { Post } from '../../types';
 import { localizeCover } from '../../utils/coverLocalize';
+import { formatDate } from '../../utils/data';
 
 interface Props {
   post: Post;
@@ -11,13 +12,6 @@ const { post } = Astro.props;
 // 封面：构建期下载远程随机图并压缩为本地 webp（快、可缓存、图固定），失败回退远程
 const coverSrc = await localizeCover(post.coverImage || '', post.slug);
 const coverIsRemote = /^https?:/.test(coverSrc);
-
-const formatDate = (date: string) =>
-  new Date(+date * 1000).toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
 ---
 
 <article class="article-grid-card">

@@ -1,0 +1,37 @@
+/* ===== hero.css：首页 hero 区（霓虹灯文字 / 打字机光标 / 出处行）=====
+   原为 src/pages/index.astro 里的 <style is:global> 内联块。
+   移到本文件是为了让 astro check 不再把这段 CSS 当 TypeScript 解析
+   （内联 <style> 会让语言服务器报出大量 Cannot find name 之类的误报）。
+   仍由 global.css 引入，作用域语义不变（全局、不做 hash 改写）。 */
+
+/* 霓虹灯文字效果 */
+@keyframes light_10px {
+  0%, 100% {
+    text-shadow:
+      0 0 2px rgba(255,255,255,0.65),
+      0 0 4px rgba(0,255,170,0.75),
+      0 0 8px rgba(0,255,170,0.62);
+  }
+  50% {
+    text-shadow:
+      0 0 2px rgba(255,255,255,0.65),
+      0 0 4px rgba(255,0,128,0.75),
+      0 0 8px rgba(255,0,128,0.62);
+  }
+}
+
+.neon-text {
+  animation: light_10px 10s linear infinite;
+}
+
+@keyframes blink {
+  0%, 49% { opacity:1; }
+  50%, 100% { opacity:0; }
+}
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+.type-source {
+  font-size: 0.85em;
+  color: rgba(255,255,255,0.6);
+}

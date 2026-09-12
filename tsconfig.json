@@ -5,6 +5,10 @@
     "**/*"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    // public/ 下是纯静态产物（含 vendored 的 fancybox.umd.js，142KB 压缩 JS），
+    // 继承自 astro/tsconfigs 的 allowJs 会把它们也解析一遍，
+    // 每次 astro check 多出几十条 ts(6133) 之类的噪音，把真错埋掉。
+    "public"
   ]
 }

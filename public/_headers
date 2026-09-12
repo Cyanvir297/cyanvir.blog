@@ -1,10 +1,52 @@
-# GitHub Pages 自定义响应头（vercel.json 里的 headers 只在 Vercel 生效，
-# 走 Pages 时这些头不会下发，所以在这里镜像一份）
+# GitHub Pages 自定义响应头
+#
+# vercel.json 里的 headers 只在 Vercel 生效；当前 CI 只部署 GitHub Pages
+# （.github/workflows/deploy.yml → deploy-pages），走 Pages 时那些头不会下发。
+# 所以这里镜像一份。⚠️ 改 vercel.json 的 headers 时必须同步改本文件。
+#
+# glob 遵循 minimatch 语义（与 _redirects 同一套匹配器）：
+#   *  不跨 /      →  /scripts/* 只匹配 /scripts/header.js，匹配不到 /scripts/base/entry.js
+#   ** 跨任意层级  →  /scripts/** 两者都匹配
+# 下面带子目录的规则一律用 **。
+#
+# 同一路径命中的多条规则是「合并」而非首个生效（否则官方文档里
+# `/*` 安全头 + 按目录加缓存头的组合示例就失效了），所以安全头写在
+# 前面、缓存头按目录加在后面，两者不冲突。
+#
+# 安全头给了 /* 和 /** 两份：官方文档把 /* 当作全站规则示例，但按 minimatch
+# 字面语义 /* 只匹配单层路径（/posts/x/index.html 这种会漏）。两条内容完全
+# 相同，合并后是幂等的；万一 /* 只按字面匹配，/** 能兜住嵌套页面。
+# 不要只留一条——漏掉的是安全头，不是缓存。
+
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
 
-/_astro/*
+/**
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/_astro/**
   Cache-Control: public, max-age=31536000, immutable
+
+/covers/**
+  Cache-Control: public, max-age=86400
+
+/font/**
+  Cache-Control: public, max-age=604800
+
+/scripts/**
+  Cache-Control: public, max-age=86400
+
+/fancybox.css
+  Cache-Control: public, max-age=86400
+
+/fancybox.umd.js
+  Cache-Control: public, max-age=86400
+
+/owo.json
+  Cache-Control: public, max-age=604800

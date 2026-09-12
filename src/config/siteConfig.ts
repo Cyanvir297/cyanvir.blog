@@ -102,7 +102,9 @@ rss: 你的rss地址
   // 站长坐标（用于"距离站长约 N 公里"），GCJ02 经纬度
   mapHome: { lng: 116.811332, lat: 36.558363 },
   // 侧栏公告卡：域名信息（逐行展示，label 后接可点击域名）
-  announcementLinks: [],
+  // 显式标注元素类型：整份配置带 as const，空数组会被推成 readonly never[]，
+  // 导致 AnnouncementCard.astro 里 l.label / l.url 全部报 ts(2339)。
+  announcementLinks: [] as Array<{ label: string; url: string }>,
   // 侧栏公告卡附加正文（支持简单 HTML），可选；不填则不显示
   announcement: '',
 } as const;

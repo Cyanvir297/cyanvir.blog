@@ -114,7 +114,12 @@
       });
 
       navCenter.addEventListener('mouseleave', function() {
-        hoverBorder.style.opacity = '0';
+        var active = navCenter.querySelector('.nav-item-active');
+        if (active) {
+          positionBorder(active);
+        } else {
+          hoverBorder.style.opacity = '0';
+        }
       }, { signal: sig });
 
       navCenter.addEventListener('mouseenter', function() {
@@ -232,13 +237,8 @@
   document.addEventListener('astro:page-load', initNav);
 
   // ========= 主题切换 =========
-  // 确保 iconify-icon 已加载
-  if (!customElements.get('iconify-icon')) {
-    var iconScript = document.createElement('script');
-    iconScript.src = 'https://code.iconify.design/3/3.1.0/iconify.min.js';
-    iconScript.defer = true;
-    document.head.appendChild(iconScript);
-  }
+  // iconify-icon 由 BaseLayout 的本地 bundle 定义（import('iconify-icon')），
+  // 不再从 code.iconify.design 拉取，避免国内网络下加载失败。
 
   var themeToggle = document.getElementById('theme-toggle');
   if (themeToggle) {

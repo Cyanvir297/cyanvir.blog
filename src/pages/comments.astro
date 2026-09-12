@@ -9,7 +9,9 @@ const envId = settings.twikooEnvId;
 
 <BaseLayout title="留言板" description="在这里给我留言，畅所欲言～" hideBreadcrumb fullWidth flushBottom>
   <div class="page-comments">
-    <ChatRoom client:load="react" envId={envId} />
+    <!-- client:load 是 Astro 的布尔指令，不加值；写 "react" 会被 Astro 7 的类型
+         （client:load: boolean）报 ts(2322)，运行时无差别（构建产物里都是 client="load"）。 -->
+    <ChatRoom client:load envId={envId} />
   </div>
 </BaseLayout>
 

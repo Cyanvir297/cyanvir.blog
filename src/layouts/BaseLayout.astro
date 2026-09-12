@@ -41,26 +41,16 @@ const ogImageUrl = ogImage
 const pageUrl = Astro.url.href;
 
 const navMenus = getMenus('NAV');
-const footerMenus = getMenus('FOOTER');
+// FOOTER 菜单已删：footerConfig.menus 恒为 []，且 Footer.astro 没有任何渲染菜单的代码。
+// 要恢复页脚菜单，重新加回 getMenus('FOOTER') 并在 Footer 里真正渲染。
 const aggregateMenus = getMenus('GROUP');
 
-const fontUrl = settings.fontCssUrl?.trim() ?? '';
-const fontFamily = settings.fontFamily?.trim() ?? '';
-const fontExtMatch = fontUrl.match(/\.(woff2|woff|ttf|otf|eot)(\?.*)?$/i);
-const isFontFile = !!fontExtMatch;
-const fontFormat = fontExtMatch ? fontExtMatch[1].toLowerCase() : '';
-const fontMimeType: Record<string, string> = {
-  woff2: 'font/woff2',
-  woff: 'font/woff',
-  ttf: 'font/ttf',
-  otf: 'font/otf',
-  eot: 'application/vnd.ms-fontobject',
-};
-const effectiveFontFamily = fontFamily
-  ? `'${fontFamily.replace(/'/g, "\\'")}'`
-  : fontUrl
-    ? "'CustomFont'"
-    : '';
+// 远程字体管线已删：早期版本从 siteConfig.fontCssUrl 拉 @font-face / 字体 CSS，
+// 静态化后该键不存在，整条管线（fontUrl/fontFormat/fontMimeType/effectiveFontFamily）
+// 以及随之的 <link rel="preconnect" href="fonts.googleapis.com"> 都是死代码。
+// 现用本地子集字体 /font/b.subset.woff2，声明见 src/styles/tokens.css。
+// 要恢复：把 fontCssUrl/fontFamily 加回 siteConfig.ts，并还原本区块与 head 里的
+// {fontUrl && ...} 两个分支（见 git 历史 3d6168b:src/layouts/BaseLayout.astro）。
 
 // JSON-LD 结构化数据（WebSite + Person）：全站注入，供搜索引擎与 AI 代理解析站点身份
 const authorAvatarSrc =
@@ -98,7 +88,9 @@ const schemaData = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     {settings.keywords && <meta name="keywords" content={settings.keywords} />}
-    {settings.adminName && <meta name="author" content={settings.adminName} />}
+    <!-- 作者元信息：早期版本读 siteConfig.adminName（该键静态化后不存在，故这条 meta 从未渲染），
+         现直接取站点配置里的作者名。 -->
+    <meta name="author" content={siteConfig.author.name} />
     <link rel="canonical" href={pageUrl} />
 
     <!-- Open Graph -->
@@ -165,46 +157,22 @@ const schemaData = {
           s.src = 'https://events.vercount.one/js';
           document.head.appendChild(s);
         }
-        if ('requestIdleCallback' in window) window.requestIdleCallback(loadVc, { timeout: 3000 });
-        else if ('requestAnimationFrame' in window) window.requestAnimationFrame(loadVc);
+        // 用 typeof === 'function' 而非 'x' in window：后者会让 TS 把 else 分支
+        // 窄化成 never（这两个属性在 Window 上恒存在），报 ts(2339)；
+        // 两种写法的运行时判断结果一致。
+        if (typeof window.requestIdleCallback === 'function') window.requestIdleCallback(loadVc, { timeout: 3000 });
+        else if (typeof window.requestAnimationFrame === 'function') window.requestAnimationFrame(loadVc);
         else window.addEventListener('load', loadVc);
       })();
     </script>
-    {fontUrl && isFontFile && (
-      <>
-        <link rel="preload" href={fontUrl} as="font" type={fontMimeType[fontFormat]} crossorigin />
-        <style set:html={`
-          @font-face {
-            font-family: ${effectiveFontFamily};
-            src: url('${fontUrl}') format('${fontFormat}');
-            font-weight: 100 900;
-            font-style: normal;
-            font-display: swap;
-          }
-        `} />
-      </>
-    )}
-    {fontUrl && !isFontFile && <link rel="stylesheet" href={fontUrl} />}
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <slot name="head" />
   </head>
-  <body
-    class="flex min-h-screen flex-col antialiased"
-    style={
-      isHome && settings.backgroundImage
-        ? `background-image: url('${settings.backgroundImage}'); background-size: cover; background-position: center; background-attachment: fixed; font-family: ${effectiveFontFamily || 'inherit'};`
-        : effectiveFontFamily
-          ? `font-family: ${effectiveFontFamily};`
-          : undefined
-    }
-  >
-    {/* 夜间星空：canvas 实时绘制星点 + 流星，z-index:-1 盖在内容底下、不挡点击。
-        仅 .dark 时绘制（开关在下方脚本）。深色背景已移到 html，body 透明，星空得以透出。 */}
+  <body class="flex min-h-screen flex-col antialiased">
+    <!-- 首页背景图遮罩已删：settings.backgroundImage 来自 siteConfig.backgroundImage，
+         该键静态化后不存在，分支永不渲染。要恢复见 git 历史 3d6168b。 -->
+    <!-- 夜间星空：canvas 实时绘制星点 + 流星，z-index:-1 盖在内容底下、不挡点击。
+        仅 .dark 时绘制（开关在下方脚本）。深色背景已移到 html，body 透明，星空得以透出。 -->
     <canvas id="universe"></canvas>
-    {isHome && settings.backgroundImage && (
-      <div class="fixed inset-0 bg-black/30 -z-10 md:hidden"></div>
-    )}
     <div class="relative z-10 flex min-h-screen flex-col">
       <Header siteTitle={settings.siteTitle} siteLogo={settings.siteLogo} favicon={siteConfig.favicon.src} menus={navMenus} aggregateMenus={aggregateMenus} />
       <main id="swup-container" class:list={[
@@ -217,18 +185,13 @@ const schemaData = {
         )}
         <slot />
       </main>
+      <!-- Footer 只接受 siteTitle / siteStartDate / footerBadges 三个 prop。
+           原传进去的 menus 与 6 个 motto* 字段 Footer 一次都没读过
+           （它直接读 footerConfig.dashboardBadges / icpConfig），属纯死管线，已删。
+           要恢复"页脚格言"或"页脚菜单"：先在 Footer.astro 里真的渲染这些字段。 -->
       <Footer
         siteTitle={settings.siteTitle}
-        icp={settings.icp}
-        footerText={settings.footerText}
         siteStartDate={settings.siteStartDate}
-        menus={footerMenus}
-        showMotto={settings.showMotto}
-        mottoTitle={settings.mottoTitle}
-        mottoText={settings.mottoText}
-        mottoCtaText={settings.mottoCtaText}
-        mottoCtaUrl={settings.mottoCtaUrl}
-        mottoCtaTarget={settings.mottoCtaTarget}
         footerBadges={settings.footerBadges}
       />
     </div>
@@ -266,6 +229,13 @@ const schemaData = {
     </script>
 
     <script type="module" src={`/scripts/base/entry.js?v=${import.meta.env.DEV ? Date.now() : '3'}`}></script>
+
+    {/* iconify-icon 自定义元素的全站唯一定义点。放在 BaseLayout 而不是组件里，
+        因为 Header / FloatingBar 直接写 <iconify-icon> 字面量，并不经过 SocialIcon，
+        只有首页才引入 Sidebar → SocialIcon，按组件注入会导致其它页面图标不渲染。 */}
+    <script>
+      import('iconify-icon');
+    </script>
 
     {/* Fancybox 按需加载：点击图库图片时才动态拉取 css/js（首屏不下载） */}
     <script src="/scripts/base/fancybox.js?v=1" defer></script>

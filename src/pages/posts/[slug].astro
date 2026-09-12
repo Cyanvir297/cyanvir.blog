@@ -4,7 +4,7 @@ import TwikooComments from '../../components/comment/TwikooComments.astro';
 import CopyrightCard from '../../components/common/CopyrightCard.astro';
 import type { MarkdownHeading } from 'astro';
 import type { Post } from '../../types';
-import { getPostBySlug, getAllPosts, getAllPostsForRoutes, getSiteSettings } from '../../utils/data';
+import { getPostBySlug, getAllPosts, getAllPostsForRoutes, getSiteSettings, formatDate } from '../../utils/data';
 import { renderMarkdown } from '../../utils/markdown';
 import { siteConfig } from '../../config/siteConfig';
 
@@ -53,13 +53,6 @@ const next =
     ? sortedPosts[currentIndex + 1]
     : null;
 
-const formatDate = (date: string) =>
-  new Date(+date * 1000).toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-
 // 估算阅读时间：中文按字、英文按词
 const getReadingTime = (content: string) => {
   const chinese = (content.match(/[\u4e00-\u9fa5]/g) || []).length;
@@ -102,7 +95,7 @@ const slugify = (text: string) =>
     .replace(/[^\p{L}\p{N}\s-]/gu, '')
     .replace(/\s+/g, '-');
 
-const escapeHtml = (str) =>
+const escapeHtml = (str: string) =>
   String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -110,9 +103,9 @@ const escapeHtml = (str) =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 
-const withFancybox = (html) => {
+const withFancybox = (html: string) => {
   if (!html) return html;
-  return html.replace(/<img\b[^>]*>/g, (match, offset) => {
+  return html.replace(/<img\b[^>]*>/g, (match: string, offset: number) => {
     if (match.includes('data-fancybox=')) return match;
     const before = html.slice(0, offset);
     const lastOpenA = before.lastIndexOf('<a');
@@ -240,13 +233,14 @@ const tocTree = buildTocTree(tocFlat);
 const tocHtmlStr = tocTree.length > 0 ? '<ol class="toc-list">' + renderTocOl(tocTree) + '</ol>' : '';
 ---
 
+<!-- showToc 已删：BaseLayout 的 Props 里没有这个字段，传进去被静默忽略。
+     TOC 是否显示由本页 tocTree.length > 0 自行判断（下方 grid 布局与 <aside> 各判一次）。 -->
 <BaseLayout
   title={post?.title || '文章详情'}
   description={post ? cleanDescription(post.excerpt || post.content) : undefined}
   wide={true}
   postSlug={slug}
   postCategory={post?.category?.name}
-  showToc={tocTree.length > 0}
   ogType="article"
 >
   {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
@@ -288,7 +282,9 @@ const tocHtmlStr = tocTree.length > 0 ? '<ol class="toc-list">' + renderTocOl(to
                   {post.category.name}
                 </span>
                 <span>·</span>
-                <time datetime={post.createdAt}>{formatDate(post.createdAt)}</time>
+                <time datetime={post.createdAt}>
+                  {formatDate(post.createdAt, { year: 'numeric', month: 'long', day: 'numeric' })}
+                </time>
                 <span>·</span>
                 <span id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span> 次阅读</span>
                 <span>·</span>

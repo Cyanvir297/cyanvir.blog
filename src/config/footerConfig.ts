@@ -1,6 +1,6 @@
 // 页脚配置（菜单 / 格言 / 徽章 / 仪表盘）
 export const footerConfig = {
-  menus: [] as { id: string; label: string; href: string; sortOrder: number }[],
+  menus: [] as { id: string; label: string; href: string; sortOrder: number; icon: string }[],
   showMotto: false,
   mottoTitle: '',
   mottoText: '',

@@ -91,18 +91,18 @@
     border: 1px solid rgb(var(--primary) / 0.25);
     white-space: nowrap;
   }
+  /* 只有 .vstat-stats 一个子元素，收成单列；原来的第二列（国家/系统/浏览器 TOP6）
+     已删除，留着会让 ~87% 的卡片宽度空白，并在空白处画出一条竖分隔线。 */
   .vstat-body {
     display: grid;
-    grid-template-columns: minmax(110px, 0.4fr) 2.6fr;
+    grid-template-columns: 1fr;
     gap: 2rem;
     align-items: stretch;
   }
   .vstat-stats {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.85rem;
-    padding-right: 1.5rem;
-    border-right: 1px solid rgb(var(--border) / 0.5);
   }
   .vstat-stat {
     display: flex;

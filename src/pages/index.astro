@@ -6,15 +6,12 @@ import ImageWrapper from '../components/common/ImageWrapper.astro';
 import type { Post } from '../types';
 import { getAllPosts, getAllPostsForRoutes, getSiteSettings, getCategories, getTags } from '../utils/data';
 import { siteConfig } from '../config/siteConfig';
-// hero 图静态引用：提供 video poster 的构建后 URL
-import heroImg from '../assets/images/hero.webp';
-
 const settings = getSiteSettings();
 const siteTitle = settings.siteTitle;
 const siteDescription = settings.siteDescription;
-const heroType = settings.heroType || 'image';
+// hero 只支持静态图。早期版本还有视频分支（siteConfig.heroType === 'video' + heroVideo），
+// 该键静态化后不存在、分支永不渲染，已删除。要恢复见 git 历史 3d6168b:src/pages/index.astro。
 const heroImage = settings.heroImage || 'images/hero.webp';
-const heroVideo = settings.heroVideo || '';
 const siteStartDate = settings.siteStartDate || '';
 
 const categories = await getCategories();
@@ -76,29 +73,19 @@ const latestPosts = posts.slice(0, 6);
       class="absolute inset-0 h-full w-full object-cover"
       fetchpriority="high"
       loading="eager"
+      widths={[640, 960, 1220]}
+      sizes="(max-width: 1200px) 100vw, 1200px"
       aria-hidden="true"
     />
-    {(heroType === 'video' && heroVideo) && (
-      <video
-        class="hero-video absolute inset-0 h-full w-full object-cover"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="metadata"
-        poster={heroImg.src}
-        aria-hidden="true"
-      >
-        <source src={heroVideo} type="video/mp4" />
-      </video>
-    )}
     <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/60"></div>
     <div class="relative px-6 py-16">
       <h1 class="neon-text text-3xl sm:text-5xl font-extrabold tracking-tight text-white drop-shadow-lg">
         {siteTitle}
       </h1>
       <p class="mx-auto mt-4 max-w-xl text-center text-base sm:text-lg text-white/85 min-h-[7rem]">
-        <span id="typewriter-text" class="neon-text"></span><span id="typewriter-cursor" class="ml-1 animate-blink">|</span>
+        <!-- 文案经 data-sentences 传入，由 public/scripts/base/hero.js 读取；
+             原实现用 define:vars 注进内联脚本，会让 astro check 把整段 JS 当 TS 解析。 -->
+        <span id="typewriter-text" class="neon-text" data-sentences={JSON.stringify(heroSentences)}></span><span id="typewriter-cursor" class="ml-1 animate-blink">|</span>
       </p>
       {
         titleIcons.length > 0 && (
@@ -172,204 +159,8 @@ const latestPosts = posts.slice(0, 6);
     </div>
   </section>
 
-<script is:inline data-swup-reload-script define:vars={{ heroSentences }}>
-  (function () {
-    // 代次机制：每次脚本运行时递增，旧实例的回调发现代次不匹配就自动退出
-    window.__twGen = (window.__twGen || 0) + 1;
-    var myGen = window.__twGen;
-
-    var textEl = document.getElementById('typewriter-text');
-    if (!textEl) return;
-
-    var SENTENCES = heroSentences;
-    var TYPING_SPEED = 120;
-    var DELETING_SPEED = 60;
-    var PAUSE_AFTER_TYPE = 3000;
-    var PAUSE_BEFORE_START = 600;
-
-    var mainText = '';
-    var sourceText = '';
-    var mainLines = null;
-    var displayMain = '';
-    var displaySource = '';
-    var phase = 'typing-main';
-
-    function isStale() {
-      return window.__twGen !== myGen;
-    }
-
-    // 兜底句：heroSentences 配置为空时用，避免首页空白
-    var FALLBACK_SENTENCES = [
-      { main: '活在珍贵的人间', source: '' },
-      { main: '探索技术的边界', source: '' },
-      { main: '记录生活的点滴', source: '' },
-    ];
-
-    // 播放队列：洗牌后依次取用，全部轮完才重新洗牌——避免删完立刻复读同一句
-    var playQueue = [];
-    var lastMain = typeof window.__twLastMain === 'string' ? window.__twLastMain : '';
-
-    function nextSentence() {
-      var pool = SENTENCES.length > 0 ? SENTENCES : FALLBACK_SENTENCES;
-      if (playQueue.length === 0) {
-        playQueue = pool.slice();
-        for (var i = playQueue.length - 1; i > 0; i--) {
-          var j = Math.floor(Math.random() * (i + 1));
-          var swap = playQueue[i];
-          playQueue[i] = playQueue[j];
-          playQueue[j] = swap;
-        }
-      }
-      var pick = playQueue.shift();
-      // 队首正好是刚播完的那句（含软路由重跑时继承的上一句）时挪到队尾
-      if (pool.length > 1 && pick.main === lastMain) {
-        playQueue.push(pick);
-        pick = playQueue.shift();
-      }
-      lastMain = pick.main;
-      window.__twLastMain = pick.main;
-      return pick;
-    }
-
-    // 按预设的 lines 方案分行：有 lines 时按配置换行，无 lines 时整句一行
-    // text 是当前已打出的前缀，只在打到断点位置才插 <br>
-    function appendPoem(parent, text, lines) {
-      if (!lines || lines.length <= 1) {
-        if (text) parent.appendChild(document.createTextNode(text));
-        return;
-      }
-      var breakAt = {}, pos = 0, li;
-      for (li = 0; li < lines.length - 1; li++) {
-        pos += lines[li].length;
-        breakAt[pos] = true; // 1-indexed：第 pos 个字之后换行
-      }
-      var buf = '';
-      for (var i = 0; i < text.length; i++) {
-        buf += text.charAt(i);
-        if (breakAt[i + 1]) {
-          parent.appendChild(document.createTextNode(buf));
-          parent.appendChild(document.createElement('br'));
-          buf = '';
-        }
-      }
-      if (buf) parent.appendChild(document.createTextNode(buf));
-    }
-
-    function render() {
-      textEl.textContent = '';
-      var mainSpan = document.createElement('span');
-      appendPoem(mainSpan, displayMain, mainLines);
-      textEl.appendChild(mainSpan);
-      if (sourceText && displaySource.length > 0) {
-        textEl.appendChild(document.createElement('br'));
-        var srcSpan = document.createElement('span');
-        srcSpan.className = 'type-source';
-        srcSpan.textContent = displaySource;
-        textEl.appendChild(srcSpan);
-      }
-    }
-
-    function tick() {
-      if (isStale()) return;
-      if (phase === 'typing-main') {
-        if (displayMain.length < mainText.length) {
-          displayMain = mainText.slice(0, displayMain.length + 1);
-          render();
-          window.__twTimer = setTimeout(tick, TYPING_SPEED);
-        } else {
-          phase = sourceText ? 'typing-source' : 'paused';
-          window.__twTimer = setTimeout(tick, 400);
-        }
-      } else if (phase === 'typing-source') {
-        if (displaySource.length < sourceText.length) {
-          displaySource = sourceText.slice(0, displaySource.length + 1);
-          render();
-          window.__twTimer = setTimeout(tick, TYPING_SPEED);
-        } else {
-          phase = 'paused';
-          window.__twTimer = setTimeout(tick, PAUSE_AFTER_TYPE);
-        }
-      } else if (phase === 'paused') {
-        phase = 'deleting';
-        window.__twTimer = setTimeout(tick, 0);
-      } else if (phase === 'deleting') {
-        if (displaySource.length > 0) {
-          displaySource = displaySource.slice(0, -1);
-          render();
-          window.__twTimer = setTimeout(tick, DELETING_SPEED);
-        } else if (displayMain.length > 0) {
-          displayMain = displayMain.slice(0, -1);
-          render();
-          window.__twTimer = setTimeout(tick, DELETING_SPEED);
-        } else {
-          // 这一轮删完换下一句，而不是重复刚播过的那句
-          var next = nextSentence();
-          mainText = next.main;
-          sourceText = next.source;
-          mainLines = next.lines || null;
-          displayMain = '';
-          displaySource = '';
-          phase = 'typing-main';
-          window.__twTimer = setTimeout(tick, PAUSE_BEFORE_START);
-        }
-      }
-    }
-
-    function init() {
-      var result = nextSentence();
-      mainText = result.main;
-      sourceText = result.source;
-      mainLines = result.lines || null;
-      displayMain = '';
-      displaySource = '';
-      phase = 'typing-main';
-      tick();
-    }
-
-    // 清除旧实例的定时器
-    if (window.__twTimer) clearTimeout(window.__twTimer);
-
-    init();
-  })();
-</script>
-
-<style is:global>
-  /* 霓虹灯文字效果 */
-  @keyframes light_10px {
-    0%, 100% {
-      text-shadow:
-        0 0 2px rgba(255,255,255,0.65),
-        0 0 4px rgba(0,255,170,0.75),
-        0 0 8px rgba(0,255,170,0.62);
-    }
-    50% {
-      text-shadow:
-        0 0 2px rgba(255,255,255,0.65),
-        0 0 4px rgba(255,0,128,0.75),
-        0 0 8px rgba(255,0,128,0.62);
-    }
-  }
-
-  .neon-text {
-    animation: light_10px 10s linear infinite;
-  }
-
-  @keyframes blink {
-    0%, 49% { opacity:1; }
-    50%, 100% { opacity:0; }
-  }
-  .animate-blink {
-    animation: blink 1s step-end infinite;
-  }
-  .type-source {
-    font-size: 0.85em;
-    color: rgba(255,255,255,0.6);
-  }
-
-  /* 尊重「减少动态效果」偏好：关闭 Hero 背景视频，回退到静态图片 */
-  @media (prefers-reduced-motion: reduce) {
-    .hero-video { display: none; }
-  }
-</style>
+<!-- 首页 hero 打字机已挪到 public/scripts/base/hero.js（经 entry.js 按需加载）。
+     原实现是内联脚本 + define:vars 注入，会让 astro check 把整段原生 JS 当 TS 解析、
+     报出上百个误报。本注释刻意不出现 script 标签的字面写法，否则解析器会误判。 -->
 
 </BaseLayout>

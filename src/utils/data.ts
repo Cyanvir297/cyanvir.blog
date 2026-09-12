@@ -42,6 +42,15 @@ function pickCoverApi(seed: string): string {
 // 站点时区偏移（frontmatter 未写时区时按此解释）
 const SITE_TZ_OFFSET = '+08:00';
 
+// 站点展示时区（IANA 名，给 Intl 用）。所有面向用户的日期一律钉死到这里：
+//   1. 构建机不一定是上海（GitHub Actions / Vercel 是 UTC），不钉 timeZone 时
+//      toLocaleDateString 按构建机时区算，+08:00 凌晨发的文章会显示成前一天；
+//   2. 客户端渲染按访客本机时区算，跨时区访客看到的日期会和首屏 SSR 不一致。
+// 中国自 1991 年起无夏令时，Asia/Shanghai 恒为 UTC+8，与 SITE_TZ_OFFSET 一致。
+// ⚠️ timeZone 必须写在 options 对象里 —— toLocaleDateString 不像 toLocaleString
+// 那样接收第三个 timeZone 参数，写在外面会被静默忽略（不报错，直接退回本机时区）。
+export const SITE_TZ = 'Asia/Shanghai';
+
 // frontmatter 日期归一化：无时区标记时补上站点时区偏移。
 // JS 对无时区的日期串按「构建机本地时区」解析 —— 本地构建与 UTC CI（Vercel /
 // GitHub Actions）会解出相差 8 小时的结果，进而污染 JSON-LD datePublished、
@@ -62,6 +71,24 @@ function withSiteTz(value: string): string {
 function toUnixSeconds(value: string, fallback: string): string {
   const timestamp = new Date(withSiteTz(value)).getTime();
   return Number.isFinite(timestamp) ? String(Math.floor(timestamp / 1000)) : fallback;
+}
+
+/**
+ * 展示用日期。ts 为 Unix 秒（Post.createdAt / updatedAt 的形态）。
+ * 钉死 SITE_TZ，见上方注释。客户端脚本请用同等的 Intl.DateTimeFormat + timeZone。
+ */
+export function formatDate(
+  ts: string,
+  opts: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' },
+): string {
+  return new Intl.DateTimeFormat('zh-CN', { ...opts, timeZone: SITE_TZ }).format(new Date(+ts * 1000));
+}
+
+/** 展示用年份（归档页按年分组）。用 en-CA 拿纯数字年份，zh-CN 会多一个「年」。 */
+export function formatYear(ts: string): string {
+  return new Intl.DateTimeFormat('en-CA', { year: 'numeric', timeZone: SITE_TZ }).format(
+    new Date(+ts * 1000),
+  );
 }
 
 function mapPost(entry: CollectionEntry<'posts'>): Post {
@@ -91,8 +118,8 @@ function mapPost(entry: CollectionEntry<'posts'>): Post {
     views: 0,
     createdAt,
     updatedAt,
-    digest: entry.digest,
-    author: { id: '', name: d.zz || siteConfig.adminName || 'admin', email: '', avatar: '' },
+    digest: String(entry.digest ?? ''),
+    author: { id: '', name: d.zz || siteConfig.author.name, email: '', avatar: '' },
     category,
     tags: tagList,
   };
@@ -209,18 +236,10 @@ export function getSiteSettings(): SiteSettings {
     siteDescription: siteConfig.description,
     siteLogo: siteConfig.favicon.src, // favicon 兼作站点图标
     favicon: siteConfig.favicon.src,
-    icp: siteConfig.icp,
-    footerText: siteConfig.footerText,
     siteStartDate: siteConfig.siteStartDate,
     postsPerPage: String(siteConfig.postsPerPage),
     twikooEnvId: commentConfig.envId,
-    fontCssUrl: siteConfig.fontCssUrl,
-    fontFamily: siteConfig.fontFamily,
-    backgroundImage: siteConfig.backgroundImage,
-    heroType: siteConfig.heroType,
     heroImage: siteConfig.heroImage,
-    heroVideo: siteConfig.heroVideo,
-    friendCircleApi: siteConfig.friendCircleApi,
     linkMarkdown: siteConfig.linkMarkdown,
     showMotto: footerConfig.showMotto,
     mottoTitle: footerConfig.mottoTitle,
@@ -229,9 +248,6 @@ export function getSiteSettings(): SiteSettings {
     mottoCtaUrl: footerConfig.mottoCtaUrl,
     mottoCtaTarget: footerConfig.mottoCtaTarget,
     footerBadges: footerConfig.footerBadges,
-    adminName: siteConfig.adminName,
-    adminEmail: siteConfig.adminEmail,
-    adminBadge: siteConfig.adminBadge,
     keywords: siteConfig.keywords.join(', '),
     generateOgImages: siteConfig.generateOgImages,
   };

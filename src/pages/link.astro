@@ -23,7 +23,9 @@ interface FriendGroup {
 const settings = getSiteSettings();
 const linkMarkdown = settings.linkMarkdown || '';
 // 友链检测数据源（Friend-Circle-Lite）已停用：不再回退到上游模板作者的服务器。
-const fcApi = settings.friendCircleApi || '';
+// 想恢复：改 public/scripts/base/friend-circle.js 的 API_DEFAULT。
+// siteConfig.friendCircleApi 这条配置路径已随静态化删除。
+const fcApi = '';
 
 // 本地友链数据按类型分组
 const allFriends = getFriends();
@@ -55,7 +57,9 @@ if (linkMarkdown) {
 }
 ---
 
-<BaseLayout title="友链" wide showComment={true} description="友情链接 — 有趣的人与站点，欢迎交换友链">
+<!-- showComment 已删：BaseLayout 的 Props 里没有这个字段，传进去被静默忽略。
+     友链页的评论由 /comments 留言板的独立入口承接。 -->
+<BaseLayout title="友链" wide description="友情链接 — 有趣的人与站点，欢迎交换友链">
   <section class="mb-10 text-center">
     <h1 class="text-3xl font-extrabold tracking-tight sm:text-4xl">友情链接</h1>
     <p class="mt-3 text-[rgb(var(--fg-soft))] dark:text-[rgb(var(--fg-muted))]">有趣的人与站点，欢迎交换友链</p>

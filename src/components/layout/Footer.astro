@@ -2,18 +2,17 @@
 import { footerConfig } from '../../config/footerConfig';
 import { siteConfig } from '../../config/siteConfig';
 
+// icp / footerText 已删：它们来自 siteConfig 同名键，静态化后该键不存在、永远为空。
+// ICP 备案的真实来源是 footerConfig.icpConfig（下方仪表盘长条里的那条链接）。
+// 要恢复见 git 历史 3d6168b:src/components/layout/Footer.astro。
 interface Props {
   siteTitle?: string;
-  icp?: string;
-  footerText?: string;
   siteStartDate?: string;
   footerBadges?: string;
 }
 
 const {
   siteTitle = siteConfig.title,
-  icp = '',
-  footerText = '',
   siteStartDate = '2026-08-30',
   footerBadges = '',
 } = Astro.props;
@@ -76,19 +75,15 @@ const copyrightRange = !isNaN(startYear) && startYear < year ? `${startYear} - $
       <div class="copyright">
         <b>&copy;<span id="copyright-year" data-start-year={isNaN(startYear) ? '' : startYear}>{copyrightRange}</span> {siteTitle}</b>
       </div>
-      {footerText && <div class="footer_custom_text" set:html={footerText} />}
-      {(badges.length > 0 || icp) && (
+      {/* ICP shields 徽章已删：那是第二条 ICP 渲染路径，读取的 siteConfig.icp 早已不存在。
+          真正在用的备案链接是上方仪表盘长条的 footerConfig.icpConfig。 */}
+      {badges.length > 0 && (
         <p id="ghbdages">
           {badges.map((b) => (
             <a class="github-badge" target="_blank" href={b.href} title={b.title}>
               <img src={b.img} alt="" loading="lazy" />
             </a>
           ))}
-          {icp && (
-            <a class="github-badge" target="_blank" href="https://beian.miit.gov.cn/" title="ICP 备案">
-              <img src={`https://img.shields.io/badge/ICP-${icp}-60a5fa?style=flat`} alt="" />
-            </a>
-          )}
         </p>
       )}
     </div>

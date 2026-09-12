@@ -44,12 +44,43 @@ jobs:
           SITE_URL: ${{ vars.SITE_URL }}
           ASTRO_BASE: ${{ vars.ASTRO_BASE }}
 
-      # 类型检查（先只报告不阻断）：当前有 187 个既有类型错误
-      # （其中 index.astro 的 152 个是模板里用了 React 风格 JSX 导致语言服务解析失败）。
-      # 全部修掉后把下面这行删掉，即可让类型错误阻断部署。
-      - name: Type check
-        run: pnpm check
-        continue-on-error: true
+      # 类型检查（带基线门禁）。
+      #
+      # 当前 9 个错误，全部是 src/pages/index.astro 模板里的 HTML 注释被 @astrojs/check
+      # 的语言服务当成 TSX 解析产生的误报：<!-- 报 ts(1003)、--> 报 ts(1382)，外加
+      # frontmatter 收尾的 --- 报 ts(1109)。真错已清零（tsc --noEmit 为 0 个）。
+      # 误报根因未定位——同样带 HTML 注释的 archive.astro / link.astro 一个都不报，
+      # 是 index.astro 特有的语言服务怪癖；不影响构建（esbuild 走正常管线，dist/ 正常产出）。
+      #
+      # 基线 9：错误数超过 9 即视为新增了真错，阻断部署。
+      # 哪天把 index.astro 那 9 个误报也解决了，把下面的 9 改成 0 即可。
+      - name: Type check (baseline gate)
+        id: typecheck
+        shell: bash
+        run: |
+          set +e
+          pnpm check 2>&1 | tee typecheck.log
+          check_status=${PIPESTATUS[0]}
+          set -e
+
+          # astro check 非 TTY 下也可能带 ANSI 色码，先剥掉再解析汇总行
+          clean=$(sed 's/\x1b\[[0-9;]*m//g' typecheck.log)
+
+          # 汇总行没出现说明 check 崩溃了（例如配置里有非法语法），不能当成 0 个错放行
+          if ! echo "$clean" | grep -q '^Result ('; then
+            echo "::error::astro check 没有输出汇总结果（astro check 退出码 $check_status），详见 typecheck.log"
+            exit 1
+          fi
+
+          count=$(echo "$clean" | grep -oE '^- [0-9]+ errors' | tail -1 | grep -oE '[0-9]+' || true)
+          count=${count:-0}
+          echo "errors=$count" >> "$GITHUB_OUTPUT"
+          echo "类型检查：$count 个错误（基线 9，astro check 退出码 $check_status）"
+
+          if [ "$count" -gt 9 ]; then
+            echo "::error::类型错误 $count 个，超过基线 9，阻断部署"
+            exit 1
+          fi
 
       - name: Create .nojekyll file
         run: touch dist/.nojekyll

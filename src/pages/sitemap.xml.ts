@@ -26,7 +26,9 @@ export const GET: APIRoute = async ({ url }) => {
   // 动态标签页面
   const tagUrls = (await getTags()).map((t) => ({ path: `tags/${t.slug}` }));
 
-  const urls = [
+  // 四个来源字段各不相同，不加显式类型时字面量会被推成 3 个互斥对象类型的联合，
+  // 后面读 u.lastmod / u.changefreq 就报 ts(2339)。
+  const urls: { loc: string; priority: string; lastmod?: string; changefreq?: string }[] = [
     ...STATIC_PAGES.map((p) => ({
       loc: `${base}/${p.path}`.replace(/\/$/, '') || base,
       priority: p.priority,
