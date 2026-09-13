@@ -20,6 +20,7 @@ backend/test-*.js
 backend/scripts/*.mjs
 scripts/*.mjs
 !scripts/subset-font.mjs
+!scripts/defer-css.mjs
 *.db
 *.tar
 .qoder/
