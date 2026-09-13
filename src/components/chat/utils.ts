@@ -146,17 +146,27 @@ export function validateMessageBody(content: string): string {
   return '';
 }
 
-/** Markdown 转安全展示的 HTML；先把 :key: 表情短码转成图片，再用 DOMPurify 消毒防 XSS */
+/**
+ * 留言板内容消毒：内容来自用户输入并经 Twikoo 存储后回显，必须过滤
+ * （剥离 on* 事件属性、script、javascript: 协议等），否则是存储型 XSS。
+ *
+ * 服务端（SSR / 水合首帧）没有 DOM，DOMPurify 跑不了。这里返回空串而不是原始 HTML——
+ * 返回原文等于把消毒整段绕开。当前 SSR 阶段消息列表为空（首帧拉取在 useEffect 里），
+ * 此分支实际不渲染内容；保留它是为了让将来有人把评论预取挪进服务端时不会静默变成漏洞。
+ */
+export function sanitizeHtml(html: string): string {
+  if (typeof window === 'undefined') return '';
+  return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+}
+
+/** Markdown 转安全展示的 HTML；先把 :key: 表情短码转成图片，再消毒防 XSS */
 export function renderMessageMarkdown(content: string): string {
   const enriched = convertEmojiShortcodes(content);
   const html = marked.parse(enriched, {
     gfm: true,
     breaks: true,
   }) as string;
-  // 留言板内容来自用户输入并经 Twikoo 存储后回显，必须经 DOMPurify 过滤
-  // （剥离 on* 事件属性、script、javascript: 协议等），否则存储型 XSS
-  if (typeof window === 'undefined') return html;
-  return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+  return sanitizeHtml(html);
 }
 
 /* ===== 图片内嵌工具（base64 ≤128KB，零服务端依赖） ===== */

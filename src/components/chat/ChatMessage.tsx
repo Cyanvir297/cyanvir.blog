@@ -1,6 +1,5 @@
 // 单条 QQ 群聊气泡
 import { useEffect, useRef, useState } from 'react';
-import DOMPurify from 'dompurify';
 import {
   ArrowUpToLine,
   Check,
@@ -14,7 +13,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import type { GuestbookMessage } from './types';
-import { getInitials } from './utils';
+import { getInitials, sanitizeHtml } from './utils';
 
 interface Props {
   message: GuestbookMessage;
@@ -50,10 +49,7 @@ export default function ChatMessage({
   const bodyRef = useRef<HTMLDivElement>(null);
 
   // 渲染前统一消毒：覆盖所有来源（含 Twikoo 拉回的历史评论），防御存储型 XSS
-  const safeBody =
-    typeof window === 'undefined'
-      ? message.body
-      : DOMPurify.sanitize(message.body, { USE_PROFILES: { html: true } });
+  const safeBody = sanitizeHtml(message.body);
 
   // 图片灯箱：给用户图片（非 emoji）加 data-fancybox；全局只 bind 一次（document 事件委托，动态图片也生效）
   useEffect(() => {
