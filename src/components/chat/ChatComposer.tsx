@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Image, LoaderCircle, Reply, Smile, TriangleAlert, X } from 'lucide-react';
 import type { GuestbookMessage, GuestbookProfile } from './types';
 import { MAX_IMAGE_SIZE_BYTES, MAX_MESSAGE_LENGTH, readImageAsDataUrl } from './utils';
-import { getEmojiPacks, loadEmojiPacks, type OwOPack } from './emoji';
+import { loadEmojiPacks, type OwOPack } from './emoji';
 
 interface Props {
   profile: GuestbookProfile;

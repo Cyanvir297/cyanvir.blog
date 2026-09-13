@@ -4,7 +4,7 @@ import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import Breadcrumb from '../components/layout/Breadcrumb.astro';
 import FloatingBar from '../components/layout/FloatingBar.astro';
-import type { SiteSettings, MenuItem } from '../types';
+import type { SiteSettings } from '../types';
 import { getSiteSettings, getMenus } from '../utils/data';
 import { siteConfig } from '../config/siteConfig';
 
@@ -13,6 +13,7 @@ interface Props {
   description?: string;
   wide?: boolean;
   fullWidth?: boolean;
+  // 用于拼动态 OG 图地址 /og/<slug>.png（下方 ogImageUrl），不要删
   postSlug?: string;
   postCategory?: string;
   hideBreadcrumb?: boolean;
@@ -24,7 +25,6 @@ interface Props {
 }
 
 const { title: rawTitle, description: rawDescription, wide = false, fullWidth = false, postSlug, postCategory, hideBreadcrumb = false, flushBottom = false, ogType = 'website', ogImage } = Astro.props;
-const isHome = Astro.url.pathname === '/';
 
 const settings: SiteSettings = getSiteSettings();
 
@@ -181,7 +181,7 @@ const schemaData = {
         fullWidth ? "max-w-none" : wide ? "max-w-[1200px]" : "max-w-5xl"
       ]}>
         {!hideBreadcrumb && (
-          <Breadcrumb title={rawTitle} postSlug={postSlug} postCategory={postCategory} menus={navMenus} />
+          <Breadcrumb title={rawTitle} postCategory={postCategory} menus={navMenus} />
         )}
         <slot />
       </main>

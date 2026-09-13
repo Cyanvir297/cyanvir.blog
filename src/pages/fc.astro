@@ -1,9 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TabNav from '../components/layout/TabNav.astro';
-import { getSiteSettings } from '../utils/data';
-
-const settings = getSiteSettings();
 // 朋友圈数据源（Friend-Circle-Lite）已停用：不再回退到上游模板作者的服务器。
 // 想恢复：在 public/scripts/base/friend-circle.js 里把 API_DEFAULT 设成你自己的
 // Friend-Circle-Lite 实例地址，并恢复其中被注释掉的 fetchJson 实现。

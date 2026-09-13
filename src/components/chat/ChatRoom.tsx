@@ -5,7 +5,6 @@ import {
   Bell,
   ChevronDown,
   LoaderCircle,
-  MessageSquareText,
   RefreshCw,
   RotateCcw,
   WifiOff,

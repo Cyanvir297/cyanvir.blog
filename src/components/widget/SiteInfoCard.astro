@@ -3,12 +3,10 @@ interface Props {
   postCount: number
   totalWords: number
   runDays: number
-  visitorCount: number
-  pageViews: number
   lastUpdated: number
 }
 
-const { postCount, totalWords, runDays, visitorCount, pageViews, lastUpdated } = Astro.props
+const { postCount, totalWords, runDays, lastUpdated } = Astro.props
 
 const fmt = (n: number) => n.toLocaleString('zh-CN')
 const fmtWords = (n: number) => (n >= 10000 ? `${(n / 10000).toFixed(1)}w` : n.toLocaleString('zh-CN'))

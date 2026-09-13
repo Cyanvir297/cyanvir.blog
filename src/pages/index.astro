@@ -42,9 +42,6 @@ const posts: Post[] = await getAllPosts();
 const allPosts: Post[] = await getAllPostsForRoutes();
 let error: string | null = null;
 
-// 公开访客统计（纯静态改由 Vercount 客户端填充，构建期传 0）
-const visitorStats = { visitors: 0, pageviews: 0 };
-
 // 本站总字数：与文章详情页口径一致（中文按字、英文按词，含代码）
 function countWords(md: string): number {
   const chinese = (md || '').match(/[\u4e00-\u9fa5]/g) || [];
@@ -90,7 +87,7 @@ const latestPosts = posts.slice(0, 6);
       {
         titleIcons.length > 0 && (
           <ul class="mt-5 flex flex-wrap items-center justify-center gap-5">
-            {titleIcons.map((it, i) => (
+            {titleIcons.map((it) => (
               <li>
                 <a
                   href={it.href || '#'}
@@ -151,8 +148,6 @@ const latestPosts = posts.slice(0, 6);
           postCount={postCount}
           totalWords={totalWords}
           runDays={runDays}
-          visitorCount={visitorStats.visitors}
-          pageViews={visitorStats.pageviews}
           lastUpdated={lastBuildTs}
         />
       </aside>

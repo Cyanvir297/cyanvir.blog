@@ -8,7 +8,6 @@ const { icon, class: className = 'size-4' } = Astro.props;
 
 // 判断图标类型：图片URL / emoji / Iconify 标识符
 const isImage = Boolean(icon && (/^https?:\/\//.test(icon) || icon.startsWith('/')));
-const isEmoji = Boolean(icon && /^[\p{Emoji_Presentation}\p{Extended_Pictographic}]$/u.test(icon));
 const isIconify = Boolean(icon && /^[a-z][a-z0-9-]*:[a-z0-9-]+$/.test(icon));
 ---
 

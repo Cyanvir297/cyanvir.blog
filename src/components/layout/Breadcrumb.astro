@@ -1,6 +1,6 @@
 ---
 import MenuIcon from './MenuIcon.astro';
-import type { MenuItem, Post } from '../../types';
+import type { MenuItem } from '../../types';
 
 interface BreadcrumbItem {
   label: string;
@@ -11,12 +11,11 @@ interface BreadcrumbItem {
 
 interface Props {
   title?: string;
-  postSlug?: string;
   postCategory?: string;
   menus?: MenuItem[];
 }
 
-const { title, postSlug, postCategory, menus = [] } = Astro.props as Props;
+const { title, postCategory, menus = [] } = Astro.props as Props;
 
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isHome = pathname === '/';

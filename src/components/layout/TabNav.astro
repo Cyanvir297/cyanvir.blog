@@ -19,7 +19,6 @@ const activeIdx = tabs.findIndex((tab) => {
 <nav id="tab-nav" class={`tab-nav${activeIdx >= 0 ? ' has-active' : ''}`}>
   <div id="tab-hover-border"></div>
   {tabs.map((tab, i) => {
-    const tabPath = tab.href.replace(/\/$/, '') || '/';
     const isActive = i === activeIdx;
     return (
       <a

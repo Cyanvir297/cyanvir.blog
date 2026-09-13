@@ -22,8 +22,6 @@ const grouped = sorted.reduce<Record<string, Post[]>>((acc, post) => {
   return acc;
 }, {});
 
-const years = Object.keys(grouped).sort((a, b) => +b - +a);
-
 // 首屏 SSR 只渲染第 1 页，避免 JS 初始化全量替换造成闪烁
 const pagedPosts = sorted.slice(0, PER_PAGE);
 const pagedGrouped = pagedPosts.reduce<Record<string, Post[]>>((acc, post) => {

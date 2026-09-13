@@ -12,12 +12,10 @@ interface Props {
   postCount: number;
   totalWords: number;
   runDays: number;
-  visitorCount: number;
-  pageViews: number;
   lastUpdated: number;
 }
 
-const { categories, tags, postCount, totalWords, runDays, visitorCount, pageViews, lastUpdated } = Astro.props;
+const { categories, tags, postCount, totalWords, runDays, lastUpdated } = Astro.props;
 
 const author = {
   name: siteConfig.author?.name || siteConfig.title,
@@ -163,8 +161,6 @@ const socialLinkClass =
     postCount={postCount}
     totalWords={totalWords}
     runDays={runDays}
-    visitorCount={visitorCount}
-    pageViews={pageViews}
     lastUpdated={lastUpdated}
   />
 </aside>
