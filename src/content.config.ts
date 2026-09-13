@@ -1,5 +1,6 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { z } from 'zod';
 
 // 非法日期不能让构建通过：否则会变成 "Invalid Date" 一路流进 RSS 的 pubDate、
 // sitemap 的 lastmod、JSON-LD 和 OG 分享图，污染搜索引擎直接读取的字段。

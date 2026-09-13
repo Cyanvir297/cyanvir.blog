@@ -62,6 +62,9 @@ importers:
       tailwindcss:
         specifier: ^4.3.2
         version: 4.3.3
+      zod:
+        specifier: ^4.3.6
+        version: 4.4.3
     devDependencies:
       '@astrojs/check':
         specifier: ^0.9.10
