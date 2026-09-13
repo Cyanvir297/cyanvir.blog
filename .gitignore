@@ -1,4 +1,8 @@
 node_modules
+# package.json 的 packageManager 是 pnpm，唯一有效的锁文件是 pnpm-lock.yaml。
+# package-lock.json 没有任何使用方（Vercel 和 CI 都跑 pnpm install），
+# 历史上删过一次又被恢复过，这里显式忽略防 npm install 误生成后再次入库。
+package-lock.json
 dist
 dist.old
 .astro
