@@ -157,7 +157,7 @@ const serializedTotalPages = JSON.stringify(totalPages);
 </BaseLayout>
 
 <!-- Swup 切换到归档页时也要重新绑定分页按钮事件。 -->
-<script data-swup-reload-script define:vars={{ serializedPosts, serializedTotalPages, serializedPerPage: JSON.stringify(PER_PAGE), siteTz: SITE_TZ }}>
+<script is:inline data-swup-reload-script define:vars={{ serializedPosts, serializedTotalPages, serializedPerPage: JSON.stringify(PER_PAGE), siteTz: SITE_TZ }}>
   const archiveRoot = document.getElementById('archive-root');
   const posts = JSON.parse(serializedPosts || '[]');
   const totalPages = Number(serializedTotalPages) || 1;

@@ -112,7 +112,7 @@ const schemaData = {
     <link rel="sitemap" href="/sitemap.xml" />
     <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss.xml" />
     <title>{title}</title>
-    <script type="application/ld+json" set:html={JSON.stringify(schemaData)}></script>
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schemaData)}></script>
     <script is:inline>
       // 隐私防护（Tracking Prevention / 隐私扩展）可能拦截 localStorage。
       // 探测一次；若被拦则降级为内存实现，避免每个访问点都打印 blocked 日志。
@@ -228,7 +228,7 @@ const schemaData = {
       })();
     </script>
 
-    <script type="module" src={`/scripts/base/entry.js?v=${import.meta.env.DEV ? Date.now() : '3'}`}></script>
+    <script is:inline type="module" src={`/scripts/base/entry.js?v=${import.meta.env.DEV ? Date.now() : '3'}`}></script>
 
     {/* iconify-icon 自定义元素的全站唯一定义点。放在 BaseLayout 而不是组件里，
         因为 Header / FloatingBar 直接写 <iconify-icon> 字面量，并不经过 SocialIcon，
@@ -238,7 +238,7 @@ const schemaData = {
     </script>
 
     {/* Fancybox 按需加载：点击图库图片时才动态拉取 css/js（首屏不下载） */}
-    <script src="/scripts/base/fancybox.js?v=1" defer></script>
+    <script is:inline src="/scripts/base/fancybox.js?v=1" defer></script>
 
     {/* 全站图片优化：懒加载 + 异步解码 + 加载完成淡入。
         首屏关键图（fetchpriority=high 的 Hero / 标记 data-no-lazy 的导航图标）不淡入，保护 LCP。 */}
