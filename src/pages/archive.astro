@@ -114,9 +114,11 @@ const serializedTotalPages = JSON.stringify(totalPages);
                           {post.title}
                         </h3>
                         <div class="mt-1 flex items-center gap-2 text-xs text-[rgb(var(--fg-muted))] dark:text-[rgb(var(--fg-muted))]">
-                          <span class="rounded-full bg-blue-50 px-2 py-0.5 text-blue-700 dark:bg-blue-900/30 dark:text-sky-400">
-                            {post.category.name}
-                          </span>
+                          {post.category.name && (
+                            <span class="rounded-full bg-blue-50 px-2 py-0.5 text-blue-700 dark:bg-blue-900/30 dark:text-sky-400">
+                              {post.category.name}
+                            </span>
+                          )}
                           {post.tags.length > 0 && (
                             <span class="truncate">
                               {post.tags.map((t) => `#${t.name}`).join(' ')}
@@ -243,9 +245,7 @@ const serializedTotalPages = JSON.stringify(totalPages);
                 ${escapeHtml(post.title)}
               </h3>
               <div class="mt-1 flex items-center gap-2 text-xs text-[rgb(var(--fg-muted))] dark:text-[rgb(var(--fg-muted))]">
-                <span class="rounded-full bg-blue-50 px-2 py-0.5 text-blue-700 dark:bg-blue-900/30 dark:text-sky-400">
-                  ${escapeHtml(post.category)}
-                </span>
+                ${post.category ? `<span class="rounded-full bg-blue-50 px-2 py-0.5 text-blue-700 dark:bg-blue-900/30 dark:text-sky-400">${escapeHtml(post.category)}</span>` : ''}
                 ${post.tags.length > 0 ? `<span class="truncate">${post.tags.map((tag) => `#${escapeHtml(tag)}`).join(' ')}</span>` : ''}
               </div>
             </div>

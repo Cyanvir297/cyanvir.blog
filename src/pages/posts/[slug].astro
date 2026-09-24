@@ -278,10 +278,14 @@ const tocHtmlStr = tocTree.length > 0 ? '<ol class="toc-list">' + renderTocOl(to
           <article class="post-article">
             <header class="mb-8 text-center">
               <div class="flex flex-wrap items-center justify-center gap-2 text-sm text-[rgb(var(--fg-muted))] dark:text-[rgb(var(--fg-muted))]">
-                <span class="rounded-full bg-blue-50 px-2.5 py-1 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-sky-400">
-                  {post.category.name}
-                </span>
-                <span>·</span>
+                {post.category.name && (
+                  <Fragment>
+                    <span class="rounded-full bg-blue-50 px-2.5 py-1 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-sky-400">
+                      {post.category.name}
+                    </span>
+                    <span>·</span>
+                  </Fragment>
+                )}
                 <time datetime={post.createdAt}>
                   {formatDate(post.createdAt, { year: 'numeric', month: 'long', day: 'numeric' })}
                 </time>
