@@ -103,6 +103,67 @@ const escapeHtml = (str: string) =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 
+// 还原实体。属性值是从「渲染后的 HTML」解析出来的，里面的 &quot; 之类是编码结果；
+// 直接丢进 escapeHtml 会变成 &amp;quot;，浏览器解出来就是字面的 &quot;。
+const decodeEntity = (s: string): string =>
+  s.replace(/&(quot|amp|lt|gt|apos|#\d+|#x[0-9a-fA-F]+);/gi, (m, g) => {
+    switch (g.toLowerCase()) {
+      case 'quot': return '"';
+      case 'amp': return '&';
+      case 'lt': return '<';
+      case 'gt': return '>';
+      case 'apos': return "'";
+      default: {
+        const hex = g.toLowerCase().startsWith('#x');
+        const code = parseInt(g.slice(2), hex ? 16 : 10);
+        return Number.isFinite(code) ? String.fromCodePoint(code) : m;
+      }
+    }
+  });
+
+// 转义「已渲染 HTML 的属性值」：先解码还原成原始字符，再按属性值规则转义。
+// 与 escapeHtml 的分工：escapeHtml 假设输入是原始文本；这里假设输入已含实体。
+const escapeAttr = (str: string) => escapeHtml(decodeEntity(str));
+
+// 图片 href/src 只放行本地路径与 http(s)，挡掉 javascript:/data: 等危险协议。
+// 原先直接拼接 src，会落成 <a href="javascript:..."> —— SSR 产出的静态 HTML 里没有第二道防线。
+const imgUrlIsSafe = (url: string) =>
+  !/^[a-z][a-z0-9+.-]*:/i.test(url) || /^(?:https?:|mailto:)/i.test(url);
+
+// 解析单个属性：双引号 / 单引号 / 无引号三种形态。
+// 输入已是渲染后的 HTML，值里的 &amp; 之类实体是编码结果，原样保留、不要二次解码。
+const parseImgAttr = (s: string): { name: string; value: string } | null => {
+  const m = s.match(/^\s*([a-zA-Z_:][-a-zA-Z0-9_:.]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s=\n>]+)))?\s*$/);
+  if (!m) return null;
+  return { name: m[1], value: m[2] ?? m[3] ?? m[4] ?? '' };
+};
+
+// 额外属性白名单。原先 cleanAttrs 的剔除正则是「匹配到第一个 " 为止」，匹配不到引号化属性，
+// 等于什么都没滤：on* 事件处理器会原样拼进 SSR 产出的 HTML。改为白名单 + 值转义。
+// 不含 style（CSS 注入）与 src/alt（下面已显式给出，留着会输出两遍同名属性）；
+// class 与 loading 单独处理：站点默认值在前，作者值追加 / 覆盖。
+const IMG_ATTR = /\s([a-zA-Z_:][-a-zA-Z0-9_:.]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s=\n>]+)))?/g;
+const IMG_SAFE_ATTRS =
+  /^(?:width|height|srcset|sizes|decoding|referrerpolicy|integrity|crossorigin|title|usemap|data-[a-z0-9_-]+)$/i;
+const IMG_LOADING = /^(?:eager|lazy|auto)$/i;
+
+function collectImgAttrs(tag: string): { extra: string; cls: string; loading: string } {
+  const r = { extra: '', cls: '', loading: '' };
+  IMG_ATTR.lastIndex = 0;
+  let m: RegExpExecArray | null;
+  while ((m = IMG_ATTR.exec(tag))) {
+    if (m[0].trim() === '') continue;
+    const a = parseImgAttr(m[0]);
+    if (!a) continue;
+    const n = a.name.toLowerCase();
+    if (n === 'class') { r.cls = a.value; continue; }
+    if (n === 'loading' && IMG_LOADING.test(a.value)) { r.loading = a.value; continue; }
+    if (!IMG_SAFE_ATTRS.test(a.name)) continue;
+    r.extra += ` ${a.name}="${escapeAttr(a.value)}"`;
+  }
+  return r;
+}
+
 const withFancybox = (html: string) => {
   if (!html) return html;
   return html.replace(/<img\b[^>]*>/g, (match: string, offset: number) => {
@@ -111,21 +172,23 @@ const withFancybox = (html: string) => {
     const lastOpenA = before.lastIndexOf('<a');
     const lastCloseA = before.lastIndexOf('</a>');
     if (lastOpenA > lastCloseA) return match;
-    const srcMatch = match.match(/\ssrc=(".*?"|'.*?'|[^\s>]+)/);
-    const src = srcMatch ? srcMatch[1].replace(/^['"]|['"]$/g, '').replace(/`/g, '') : '';
+    const src = parseImgAttr(match.match(/\ssrc=(?:"[^"]*"|'[^']*'|[^\s=\n>]+)/)?.[0] ?? '')?.value ?? '';
     if (!src) return match;
-    const altMatch = match.match(/\salt=(".*?"|'.*?'|[^\s>]+)/);
-    const alt = altMatch ? altMatch[1].replace(/^['"]|['"]$/g, '') : '';
-    const titleMatch = match.match(/\stitle=(".*?"|'.*?'|[^\s>]+)/);
-    const title = titleMatch ? titleMatch[1].replace(/^['"]|['"]$/g, '') : '';
-    const attrs = match.replace(/^<img\s*/, '').replace(/>$/, '').replace(/\s+$/, '');
-    const cleanAttrs = attrs.replace(/\ssrc=(".*?"|'.*?'|[^\s>]+)/g, '').replace(/\s+/g, ' ').trim();
-    const extraAttrs = cleanAttrs ? ' ' + cleanAttrs : '';
-    const safeSrc = escapeHtml(src);
-    const safeAlt = escapeHtml(alt);
-    const safeTitle = escapeHtml(title);
-    return `<a href="${safeSrc}" data-fancybox="gallery" data-caption="${safeAlt}" class="block"><img src="${safeSrc}" alt="${safeAlt}"${safeTitle ? ` title="${safeTitle}"` : ''} loading="lazy" class="w-full rounded-xl"${extraAttrs} /></a>`;
-  }).replace(/>\s*\/&gt;\s*</g, '><');
+    // javascript:/data: 一律不包装 —— 包装后它会成为可点击的 <a href>
+    if (!imgUrlIsSafe(src)) return match;
+    const alt = parseImgAttr(match.match(/\salt=(?:"[^"]*"|'[^']*'|[^\s=\n>]+)/)?.[0] ?? '')?.value ?? '';
+    // 剔除 src/alt：下面已显式给出，留着会输出两遍同名属性
+    const { extra, cls, loading } = collectImgAttrs(
+      match
+        .replace(/\ssrc=(?:"[^"]*"|'[^']*'|[^\s=\n>]+)/g, ' ')
+        .replace(/\salt=(?:"[^"]*"|'[^']*'|[^\s=\n>]+)/g, ' '),
+    );
+    const safeSrc = escapeAttr(src);
+    const safeAlt = escapeAttr(alt);
+    // 同名属性只能出现一次：站点默认样式在前，作者写的 class 追加在后面
+    const imgClass = cls ? `w-full rounded-xl ${escapeAttr(cls)}` : 'w-full rounded-xl';
+    return `<a href="${safeSrc}" data-fancybox="gallery" data-caption="${safeAlt}" class="block"><img src="${safeSrc}" alt="${safeAlt}" class="${imgClass}" loading="${loading || 'lazy'}"${extra} /></a>`;
+  });
 };
 
 const contentHtmlReady = withFancybox(contentHtml);
