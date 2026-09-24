@@ -15,7 +15,9 @@ async function initializePage() {
   // 不在首页时 #typewriter-text 不存在，脚本自己 return，所以不必单独判代次。
   if (document.querySelector('#typewriter-text')) loads.push(import('./hero.js'));
   if (document.querySelector('.post-content')) loads.push(import('./post.js'));
-  if (document.querySelector('#link-markdown-section')) loads.push(import('./codeblocks.js'));
+  // codeblocks.js 的 wrapTables 同时管 /link 的 .prose 表格和文章页的 .post-content 表格，
+  // 两个选择器都要命中才加载；另两个函数只认 #link-markdown-section，在文章页上空转、不会误伤。
+  if (document.querySelector('#link-markdown-section, .post-content')) loads.push(import('./codeblocks.js'));
   if (document.querySelector('#tcomment')) loads.push(import('./twikoo.js'));
   if (document.querySelector('#posts-pagination')) loads.push(import('./pagination.js'));
   if (document.querySelector('#fc-root, #fc-link-config')) loads.push(import('./friend-circle.js'));
