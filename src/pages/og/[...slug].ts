@@ -4,7 +4,7 @@ import * as fs from 'node:fs';
 import satori from 'satori';
 import { woff2 } from 'fonteditor-core';
 import type { Post } from '../../types';
-import { getAllPosts, siteConfig } from '../../utils/data';
+import { getAllPostsForRoutes, siteConfig } from '../../utils/data';
 
 export const prerender = true;
 
@@ -17,7 +17,9 @@ async function woff2ToTtf(buf: Buffer): Promise<Buffer> {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   if (!siteConfig.generateOgImages) return [];
-  const posts = await getAllPosts();
+  // 必须与 posts/[slug].astro 的 getStaticPaths 用同一套（getAllPostsForRoutes 含 hide 文章）：
+  // BaseLayout 只要有 postSlug 就指 /og/<slug>.png，这里漏了 hide 就会生成死链 og:image。
+  const posts = await getAllPostsForRoutes();
   return posts.map((post) => ({
     params: { slug: `${post.slug}.png` },
     props: { post },
