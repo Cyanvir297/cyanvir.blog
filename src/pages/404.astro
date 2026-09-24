@@ -93,7 +93,7 @@ const msg = funMessages[Math.floor(Math.random() * funMessages.length)];
               <p class="text-xs text-[rgb(var(--fg-muted))] line-clamp-2 leading-relaxed">
                 {post.excerpt || '暂无摘要'}
               </p>
-              {post.category && (
+              {post.category?.name && (
                 <span class="inline-block mt-3 text-[10px] px-2 py-0.5 rounded-full bg-[rgb(var(--tag-bg))] border border-[rgb(var(--tag-border))] text-[rgb(var(--fg-muted))]">
                   {post.category.name}
                 </span>

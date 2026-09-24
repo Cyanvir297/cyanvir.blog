@@ -44,7 +44,7 @@ const coverIsRemote = /^https?:/.test(coverSrc);
       </time>
       <!-- 分类 + 标签 -->
       <div class="article-grid-card__meta">
-        {post.category && (
+        {post.category.name && (
           <span class="article-grid-card__category">#{post.category.name}</span>
         )}
         {post.tags.length > 0 && (
