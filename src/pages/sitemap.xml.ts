@@ -8,6 +8,14 @@ const STATIC_PAGES = [
   { path: 'categories', priority: '0.7', changefreq: 'weekly' },
   { path: 'tags', priority: '0.7', changefreq: 'weekly' },
   { path: 'link', priority: '0.6', changefreq: 'weekly' },
+  { path: 'about', priority: '0.7', changefreq: 'weekly' },
+  { path: 'contact', priority: '0.7', changefreq: 'weekly' },
+  { path: 'privacy', priority: '0.4', changefreq: 'monthly' },
+  { path: 'comments', priority: '0.3', changefreq: 'monthly' },
+  { path: 'fc', priority: '0.3', changefreq: 'monthly' },
+  { path: 'atom.xml', priority: '0.2', changefreq: 'daily' },
+  { path: 'llms.txt', priority: '0.2', changefreq: 'monthly' },
+  { path: 'friend.json', priority: '0.2', changefreq: 'weekly' },
 ];
 
 export const GET: APIRoute = async ({ url }) => {
