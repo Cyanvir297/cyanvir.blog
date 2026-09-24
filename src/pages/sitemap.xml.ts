@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { base as astroBase } from 'astro:config/server';
 import { getAllPosts, getCategories, getTags } from '../utils/data';
 
 const STATIC_PAGES = [
@@ -19,7 +20,9 @@ const STATIC_PAGES = [
 ];
 
 export const GET: APIRoute = async ({ url }) => {
-  const base = url.origin;
+  // url.origin 不含 base 前缀：设了 ASTRO_BASE 子路径部署时，直接用它拼 loc 会丢掉前缀，
+  // 搜索引擎按 sitemap 爬到的全是 404。
+  const base = new URL(astroBase, url.origin).href.replace(/\/$/, '');
 
   // 动态文章页面
   const posts = await getAllPosts();

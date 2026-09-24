@@ -4,6 +4,22 @@
 
   let _navAbort = null;
 
+  // 基础路径：Astro.config.base 可能不是 '/'（见 astro.config.mjs 的 ASTRO_BASE，
+  // GitHub Pages 子路径部署）。公开目录下的 <script src="/..."> 不会被 Astro 重写，
+  // 所以这里从 BaseLayout 注入到 <html data-base> 的值读取，缺省时退回 '/'。
+  var SITE_BASE = document.documentElement.dataset.base || '/';
+
+  // 站点时区，与 src/utils/data.ts 的 SITE_TZ / formatDate 保持一致（该文件注释要求
+  // 客户端脚本用同等的 Intl.DateTimeFormat + timeZone）。不传 timeZone 会按访客本机
+  // 时区算，跨时区访客看到的搜索结果日期会和首屏 SSR 不一致；timeZone 必须写进 options
+  // 对象 —— toLocaleDateString 不接受第三个 timeZone 参数，写在外面会被静默忽略。
+  var SITE_TZ = 'Asia/Shanghai';
+  function formatDateZh(ts) {
+    return new Intl.DateTimeFormat('zh-CN', {
+      year: 'numeric', month: '2-digit', day: '2-digit', timeZone: SITE_TZ,
+    }).format(new Date(+ts * 1000));
+  }
+
   // ========= 模块级：抽屉关闭 =========
   function closeDrawer() {
     var mobileOverlay = document.getElementById('nav-mobile-overlay');
@@ -344,7 +360,7 @@
         var post = searchResults[searchActiveIdx];
         if (post) {
           closeSearch();
-          window.location.href = '/posts/' + post.slug;
+          window.location.href = SITE_BASE + 'posts/' + post.slug;
         }
       }
     });
@@ -353,7 +369,7 @@
   var searchIndexCache = null;
   function loadSearchIndex() {
     if (searchIndexCache) return Promise.resolve(searchIndexCache);
-    return fetch('/search-index.json')
+    return fetch(SITE_BASE + 'search-index.json')
       .then(function (r) { return r.ok ? r.json() : []; })
       .then(function (d) { searchIndexCache = d || []; return searchIndexCache; })
       .catch(function () { searchIndexCache = []; return searchIndexCache; });
@@ -403,10 +419,10 @@
 
     searchResultsEl.innerHTML = searchResults.map(function(post, i) {
       var activeClass = i === searchActiveIdx ? ' active' : '';
-      return '<a href="/posts/' + post.slug + '" class="search-result-item' + activeClass + '" data-idx="' + i + '">' +
+      return '<a href="' + SITE_BASE + 'posts/' + post.slug + '" class="search-result-item' + activeClass + '" data-idx="' + i + '">' +
         '<div class="search-result-title">' + highlight(post.title) + '</div>' +
         (post.excerpt ? '<div class="search-result-excerpt">' + highlight(post.excerpt) + '</div>' : '') +
-        '<div class="search-result-meta">' + new Date(+post.createdAt * 1000).toLocaleDateString('zh-CN') + '</div>' +
+        '<div class="search-result-meta">' + formatDateZh(post.createdAt) + '</div>' +
         '</a>';
     }).join('');
 
