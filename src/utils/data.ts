@@ -213,7 +213,8 @@ export function getMenus(type: string): MenuItem[] {
       })),
     }));
   }
-  const list = type === 'NAV' ? navBarConfig.nav : type === 'FOOTER' ? footerConfig.menus : [];
+  // type === 'FOOTER' 分支已删：footerConfig.menus 恒为空且无任何渲染方。
+  const list = type === 'NAV' ? navBarConfig.nav : [];
   return list.map((m) => ({
     id: m.id,
     label: m.label,
@@ -241,12 +242,6 @@ export function getSiteSettings(): SiteSettings {
     twikooEnvId: commentConfig.envId,
     heroImage: siteConfig.heroImage,
     linkMarkdown: siteConfig.linkMarkdown,
-    showMotto: footerConfig.showMotto,
-    mottoTitle: footerConfig.mottoTitle,
-    mottoText: footerConfig.mottoText,
-    mottoCtaText: footerConfig.mottoCtaText,
-    mottoCtaUrl: footerConfig.mottoCtaUrl,
-    mottoCtaTarget: footerConfig.mottoCtaTarget,
     footerBadges: footerConfig.footerBadges,
     keywords: siteConfig.keywords.join(', '),
     generateOgImages: siteConfig.generateOgImages,

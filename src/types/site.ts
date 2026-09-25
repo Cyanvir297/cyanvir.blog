@@ -14,12 +14,6 @@ export interface SiteSettings {
   twikooEnvId: string;
   heroImage: string;
   linkMarkdown?: string;
-  showMotto?: boolean;
-  mottoTitle?: string;
-  mottoText?: string;
-  mottoCtaText?: string;
-  mottoCtaUrl?: string;
-  mottoCtaTarget?: string;
   footerBadges?: string;
   keywords?: string;
   generateOgImages?: boolean;
