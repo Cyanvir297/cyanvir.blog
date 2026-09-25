@@ -19,7 +19,13 @@ const tags = await getTags();
 
 // hero 社交图标栏：解析 siteConfig.titleIcons（JSON 数组），为空则隐藏
 function iconSrc(icon: string): string {
-  return /^https?:\/\//i.test(icon) ? icon : `https://cdn.simpleicons.org/${icon}`;
+  // 不用 /^https?:\/\//i.test(...)：frontmatter 里"正则字面量 + 模板字符串"共存会让
+  // @astrojs/check 的语言服务在收尾的 --- 上报 ts(1109) 假阳性（真错为 0、构建正常）。
+  // startsWith 版保持原正则语义：锚定开头、大小写不敏感。
+  const lower = icon.toLowerCase();
+  return lower.startsWith('http://') || lower.startsWith('https://')
+    ? icon
+    : `https://cdn.simpleicons.org/${icon}`;
 }
 let titleIcons: { icon: string; href: string }[] = [];
 try {
