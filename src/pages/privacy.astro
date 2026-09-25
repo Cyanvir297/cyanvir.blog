@@ -11,6 +11,7 @@ const email = socials.find((s) => s.url.startsWith('mailto:'))?.url;
   <section class="mb-10 text-center">
     <h1 class="text-3xl font-extrabold tracking-tight sm:text-4xl">隐私声明</h1>
     <p class="mt-3 text-[rgb(var(--fg-soft))] dark:text-[rgb(var(--fg-muted))]">了解本站如何处理你的数据</p>
+    <p class="mt-1 text-sm text-[rgb(var(--fg-soft))] dark:text-[rgb(var(--fg-muted))] opacity-70">更新于 2026-09-25</p>
   </section>
 
   <div class="prose prose-neutral dark:prose-invert max-w-none post-content">
@@ -24,25 +25,63 @@ const email = socials.find((s) => s.url.startsWith('mailto:'))?.url;
     <p>
       文章评论与<a href="/comments">留言板</a>由 Twikoo 提供。当你发表评论时，你填写的昵称、邮箱、
       网址以及评论内容会被提交到 MongoDB 中存储，用于展示与通知站长回复。邮箱仅用于接收
-      回复通知，不会对外展示。评论内容为公开信息，请勿在其中填写敏感个人数据。
+      回复通知，不会对外展示。未自带头像的留言会用邮箱的 MD5 哈希去 WeAvatar 生成头像图，
+      该哈希会发送到 WeAvatar 服务器；它是单向哈希，无法反推出原邮箱。评论内容为公开信息，
+      请勿在其中填写敏感个人数据。
     </p>
 
     <h2>统计（Vercount）</h2>
     <p>
-      本站使用 Vercount 提供访问统计。它们通过匿名计数脚本记录页面浏览量（PV）
-      与独立访客数（UV），不使用 Cookie 追踪个人身份，数据仅用于展示访问量。
+      本站使用 Vercount 提供访问统计。它通过匿名计数脚本记录页面浏览量（PV）
+      与独立访客数（UV），数据仅用于展示访问量。为区分首次访问与回访，它会写入一个有效期
+      1 年的 Cookie（值恒为 <code>1</code>）与一条 localStorage 条目，二者都不含身份标识、
+      不做跨站追踪。本站自身不写入任何 Cookie。
+    </p>
+
+    <h2>IP 定位（腾讯位置服务）</h2>
+    <p>
+      首页公告卡会显示你的大致位置，这一项由腾讯位置服务提供。你的浏览器会携带 IP、
+      User-Agent 与 Referer 请求腾讯的 IP 定位接口，腾讯返回国家、省、市、区与精确经纬度；
+      本站把它展示为「欢迎来自 XXX」，并按站长坐标算出「距离站长约 N 公里」。页面上的 IP
+      地址是明文显示的，外层只加了一层模糊遮罩，悬停即可看清完整值。
+    </p>
+    <p>
+      定位在你的浏览器里完成，本站服务器不接收、不保存任何定位结果；结果只写入本机的
+      <code>sessionStorage</code>，关闭标签页即清除。若你不想被定位，把 Vercel 环境变量
+      <code>PUBLIC_MAP_KEY</code> 清空即可（这是站点级开关，由我操作，你无需做任何设置）；
+      届时公告卡回退为只显示问候语，不再发起任何请求。
     </p>
 
     <h2>CDN 与访问日志</h2>
     <p>
-      本站部署在腾讯 EdgeOne（CDN）。在请求本站资源时，CDN 服务商可能按行业惯例记录访问日志
+      本站部署在 Vercel（含其边缘网络）。在请求本站资源时，托管方可能按行业惯例记录访问日志
       （如 IP 地址、User-Agent、访问时间与路径），用于安全防护与故障排查，不会用于个人画像。
+    </p>
+
+    <h2>其他第三方资源</h2>
+    <p>
+      页面图标由 Iconify 提供（<code>api.iconify.design</code>），留言板表情由 OwO 表情库提供
+      （图床分布在阿里云 OSS、jsDelivr、bu.dusays.com）。这些请求只包含资源地址、User-Agent
+      与 Referer，不含任何个人信息。
     </p>
 
     <h2>Cookie 与本地存储</h2>
     <p>
-      本站使用浏览器本地存储保存你的主题偏好（浅色/深色）等简单设置，不使用第三方广告 Cookie，
-      不进行跨站追踪。
+      本站自身不写入任何 Cookie，不使用第三方广告 Cookie，不进行跨站追踪；页面上唯一的 Cookie
+      来自 Vercount（见上文）。浏览器本地存储只保存与内容无关的少量设置与缓存：
+    </p>
+    <ul>
+      <li><code>theme</code>（localStorage）：主题偏好，浅色或深色。</li>
+      <li><code>twikoo-access-token</code>（localStorage）：Twikoo 签发的匿名访客令牌，
+        仅用于你删除自己发的留言。它不含身份信息，但属于凭据型数据——同一台设备上其他浏览器
+        也能读到它。</li>
+      <li>Vercount 的计数条目（localStorage）。</li>
+      <li><code>welcome-info-v5</code>（sessionStorage）：首页欢迎语与 IP 定位结果的缓存，
+        关闭标签页即清除。</li>
+    </ul>
+    <p>
+      另有两条与统计无关的本地痕迹：<code>posts-page</code> 记住文章列表的当前页码；
+      Service Worker 的 Cache Storage 会为随机封面建离线缓存，便于断网时仍能显示。
     </p>
 
     <h2>链接到第三方站点</h2>
