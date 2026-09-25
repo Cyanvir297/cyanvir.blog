@@ -17,10 +17,10 @@ uploads
 .backup/
 frontend-backup-*/
 nul
-backend_backup_*/
 *.tar.gz
-backend/test-*.js
-backend/scripts/*.mjs
+# scripts/ 下的 .mjs 默认忽略（多数是一次性构建辅助脚本，不想入库）。
+# 需要提交的用下面的 ! 白名单放行，目前只有字体子集化和 CSS 去阻塞两步。
+# 踩坑：新增 .mjs 脚本不会出现在 git status 里，容易以为文件没建出来。
 scripts/*.mjs
 !scripts/subset-font.mjs
 !scripts/defer-css.mjs
@@ -31,7 +31,6 @@ scripts/*.mjs
 .git.backup/
 *.md.bak
 *.png.bak
-backend/.backend.log
 *.log.bak
 *.log
 .wrangler/
