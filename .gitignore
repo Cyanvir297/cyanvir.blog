@@ -6,8 +6,11 @@ package-lock.json
 dist
 dist.old
 .astro
+# Astro 的 env 文件：.env / .env.local / .env.development / .env.preview / .env.production。
+# 用 .env.* 通配一次覆盖全，再显式把 .env.example 放回来 —— 它是提交进仓库的模板。
 .env
-.env.production
+.env.*
+!.env.example
 .vercel
 .netlify
 uploads

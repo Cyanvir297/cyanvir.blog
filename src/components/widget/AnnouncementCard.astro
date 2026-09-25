@@ -3,7 +3,10 @@ import { siteConfig } from '../../config/siteConfig';
 
 const announcement = siteConfig.announcement || '';
 const links = siteConfig.announcementLinks || [];
-const mapKey = siteConfig.mapKey || '';
+// 腾讯位置服务 Web 服务 key，从环境变量读，不进仓库（本地 .env / 线上 Vercel）。
+// 必须带 PUBLIC_ 前缀才会被注入客户端构建；缺失时为空串，走下方欢迎语兜底。
+// 注意：key 仍会出现在本卡片的 data-map-key 上，属于已知并接受的行为。
+const mapKey = import.meta.env.PUBLIC_MAP_KEY ?? '';
 const mapHome = siteConfig.mapHome;
 const hostOf = (u: string) => u.replace(/^https?:\/\//, '');
 ---
@@ -69,8 +72,11 @@ const hostOf = (u: string) => u.replace(/^https?:\/\//, '');
   // 刻意不用 define:vars：那会把整个 script 降级成 inline JS，下面所有 TS 类型标注都会报 ts(8010)。
   let KEY = '';
   let HOME = { lng: 0, lat: 0 };
-  // 缓存 key 带版本，欢迎逻辑改动后旧缓存自动失效（避免浏览器 sessionStorage 残留旧文案）
-  const CACHE_KEY = 'welcome-info-v4';
+  // 缓存 key 带版本，欢迎逻辑改动后旧缓存自动失效（避免浏览器 sessionStorage 残留旧文案）。
+  // v5：mapKey 从仓库硬编码改为环境变量后版本号必须跟着升一次。
+  // 旧版本号的缓存值是在旧 key 时代写进 sessionStorage 的，不升号的话轮换 key 之后
+  // 老访客会一直看到旧内容直到自己清缓存 —— 这正是 key 挪到环境变量时最容易被忽略的坑。
+  const CACHE_KEY = 'welcome-info-v5';
 
   function getDistance(e1: number, n1: number, e2: number, n2: number): number {
     const R = 6371;

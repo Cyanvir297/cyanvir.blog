@@ -94,11 +94,10 @@ rss: 你的rss地址
       lines: ['如果冬天总会过去，如果春天总会到来，', '那我祝愿这个世界所有人可择一良人，可寻一安身之所，', '冬至有饺子，端午有粽子，中秋有月饼。'] },
   ],
   // 侧栏公告卡「IP 定位 + 距站长距离」
-  // mapKey: 腾讯位置服务 Web 服务 key（https://lbs.qq.com/dev/console/application/mine ）。
-  // 留空则不发起定位请求、直接走欢迎语兜底。
-  // 参考应用域名白名单需包含本站域名，否则返回 status 110（来源域名未授权）；
-  // key 停用或每日配额耗尽返回 121 / JSONP 失败。
-  mapKey: 'SENBZ-SVWCN-T7BFI-SNWQJ-TQBLE-GDBTJ',
+  // mapKey 已移出本文件：key 是凭据，改从环境变量 PUBLIC_MAP_KEY 读取，
+  // 读取点在 src/components/widget/AnnouncementCard.astro。
+  // 为什么不放在这里：本文件被 astro.config.mjs 引入，config 加载阶段
+  // import.meta.env 不可用（Astro 对 .mjs 配置先走原生 Node import）。
   // 站长坐标（用于"距离站长约 N 公里"），GCJ02 经纬度
   mapHome: { lng: 116.811332, lat: 36.558363 },
   // 侧栏公告卡：域名信息（逐行展示，label 后接可点击域名）
