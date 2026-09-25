@@ -1,7 +1,7 @@
 // 统一数据访问层：纯静态化后所有内容/配置从本地集合与配置读取，不再调用 api。
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { siteConfig } from '../config/siteConfig';
-import { fmImageConfig } from '../config/fmImageConfig';
+import { coverConfig } from '../config/coverConfig';
 import { commentConfig } from '../config/commentConfig';
 import { friendsConfig, type FriendConfigItem } from '../config/friendsConfig';
 import { navBarConfig } from '../config/navBarConfig';
@@ -34,7 +34,7 @@ function appendSeedParam(apiUrl: string, hash: number): string {
   return `${apiUrl}${sep}v=${hash}`;
 }
 function pickCoverApi(seed: string): string {
-  const { randomCoverImage } = fmImageConfig;
+  const { randomCoverImage } = coverConfig;
   if (!randomCoverImage.enable || !randomCoverImage.apis.length) return '';
   return appendSeedParam(randomCoverImage.apis[0], getSeedHash(seed));
 }
@@ -94,10 +94,10 @@ export function formatYear(ts: string): string {
 function mapPost(entry: CollectionEntry<'posts'>): Post {
   const d = entry.data;
   const slug = d.slug || entry.id;
-  // 封面：显式 fm='api' 或未配置 fm 时走随机 API；否则用配置值
-  const rawFm = (d.fm || '').trim();
-  const coverImage = rawFm ? (rawFm === 'api' ? pickCoverApi(slug) : rawFm) : pickCoverApi(slug);
-  const categoryName = (d.fl || '').trim();
+  // 封面：显式 coverImage='api' 或未配置时走随机 API；否则用配置值
+  const rawCover = (d.coverImage || '').trim();
+  const coverImage = rawCover ? (rawCover === 'api' ? pickCoverApi(slug) : rawCover) : pickCoverApi(slug);
+  const categoryName = (d.category || '').trim();
   const category: Category = categoryName
     ? { id: categoryName, name: categoryName, slug: categoryName }
     : { id: '', name: '', slug: '' };
@@ -112,29 +112,29 @@ function mapPost(entry: CollectionEntry<'posts'>): Post {
     slug,
     title: d.title,
     content: entry.body ?? '',
-    excerpt: d.zy ?? '',
+    excerpt: d.excerpt ?? '',
     coverImage,
-    published: !d.cg,
+    published: !d.draft,
     views: 0,
     createdAt,
     updatedAt,
     digest: String(entry.digest ?? ''),
-    author: { id: '', name: d.zz || siteConfig.author.name, email: '', avatar: '' },
+    author: { id: '', name: d.author || siteConfig.author.name, email: '', avatar: '' },
     category,
     tags: tagList,
   };
 }
 
 export async function getAllPosts(): Promise<Post[]> {
-  const entries = await getCollection('posts', ({ data }) => !data.cg && !data.hide);
+  const entries = await getCollection('posts', ({ data }) => !data.draft && !data.hide);
   const posts = entries.map(mapPost);
   posts.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
   return posts;
 }
 
-// 路由用：包含 hide 文章（可直达链接），仅排除 cg 草稿
+// 路由用：包含 hide 文章（可直达链接），仅排除 draft 草稿
 export async function getAllPostsForRoutes(): Promise<Post[]> {
-  const entries = await getCollection('posts', ({ data }) => !data.cg);
+  const entries = await getCollection('posts', ({ data }) => !data.draft);
   return entries.map(mapPost);
 }
 
