@@ -62,7 +62,7 @@ function currentBranch() {
   try {
     const branch = git(['rev-parse', '--abbrev-ref', 'HEAD'], false);
     if (branch && branch !== 'HEAD') return branch;
-  } catch {}
+  } catch { /* git 命令失败时回退到 main */ }
   return 'main';
 }
 
@@ -229,7 +229,7 @@ async function watch() {
       let statusClean = true;
       try {
         statusClean = git(['status', '-s'], true) === '';
-      } catch {}
+      } catch { /* status 检查失败时按干净处理 */ }
       if (statusClean && getAheadCount() > 0) {
         if (PUSH_ENABLED) {
           log('🔄 启动兜底：检测到本地有未推送提交，补推中...');

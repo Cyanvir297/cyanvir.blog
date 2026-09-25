@@ -19,7 +19,7 @@ export async function GET(context: APIContext) {
 
   for (const post of posts) {
     // 与 rss.xml.ts 同口径：正文渲染为 HTML，相对路径绝对化
-    let content = '';
+    let content: string;
     try {
       const looksLikeHtml = /^\s*</.test(post.content) && /<\/[a-z]+>/i.test(post.content);
       const html = looksLikeHtml ? post.content : (await renderMarkdown(post.content)).html;

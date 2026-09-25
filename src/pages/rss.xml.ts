@@ -10,7 +10,7 @@ export async function GET(context: APIContext) {
   // 渲染每篇正文为 HTML（Sätteri + Shiki），图片/链接相对路径绝对化
   const items = [];
   for (const post of posts) {
-    let content = '';
+    let content: string;
     try {
       const looksLikeHtml = /^\s*</.test(post.content) && /<\/[a-z]+>/i.test(post.content);
       const html = looksLikeHtml ? post.content : (await renderMarkdown(post.content)).html;

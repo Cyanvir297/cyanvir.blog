@@ -501,7 +501,9 @@ export default function ChatRoom({ envId }: Props) {
 
     return () => {
       if (pollTimerRef.current) window.clearInterval(pollTimerRef.current);
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- cleanup 需拿最新弹窗引用，复制到变量会拿到 mount 时的 null
       if (announcementDialogRef.current?.open) announcementDialogRef.current.close();
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- 同上
       if (deleteDialogRef.current?.open) deleteDialogRef.current.close();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('online', handleOnline);
