@@ -80,8 +80,8 @@ const latestPosts = posts.slice(0, 6);
         {siteTitle}
       </h1>
       <p class="mx-auto mt-4 max-w-xl text-center text-base sm:text-lg text-white/85 min-h-[7rem]">
-        <!-- 文案经 data-sentences 传入，由 public/scripts/base/hero.js 读取；
-             原实现用 define:vars 注进内联脚本，会让 astro check 把整段 JS 当 TS 解析。 -->
+        {/* 文案经 data-sentences 传入，由 public/scripts/base/hero.js 读取；
+            原实现用 define:vars 注进内联脚本，会让 astro check 把整段 JS 当 TS 解析。 */}
         <span id="typewriter-text" class="neon-text" data-sentences={JSON.stringify(heroSentences)}></span><span id="typewriter-cursor" class="ml-1 animate-blink">|</span>
       </p>
       {
@@ -108,7 +108,7 @@ const latestPosts = posts.slice(0, 6);
 
   <section class="mx-auto mt-16 max-w-[1200px] px-4">
     <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_26%]">
-      <!-- 左栏：最新文章 -->
+      {/* 左栏：最新文章 */}
       <div>
         <div class="mb-8 flex items-end justify-between">
           <div>
@@ -140,7 +140,7 @@ const latestPosts = posts.slice(0, 6);
         }
       </div>
 
-      <!-- 右栏：资料 + 分类 + 标签 + 网站信息（桌面端吸顶） -->
+      {/* 右栏：资料 + 分类 + 标签 + 网站信息（桌面端吸顶） */}
       <aside class="lg:sticky lg:top-24 h-fit">
         <Sidebar
           categories={categories}
@@ -154,8 +154,8 @@ const latestPosts = posts.slice(0, 6);
     </div>
   </section>
 
-<!-- 首页 hero 打字机已挪到 public/scripts/base/hero.js（经 entry.js 按需加载）。
-     原实现是内联脚本 + define:vars 注入，会让 astro check 把整段原生 JS 当 TS 解析、
-     报出上百个误报。本注释刻意不出现 script 标签的字面写法，否则解析器会误判。 -->
+{/* 首页 hero 打字机已挪到 public/scripts/base/hero.js（经 entry.js 按需加载）。
+    原实现是内联脚本 + define:vars 注入，会让 astro check 把整段原生 JS 当 TS 解析、
+    报出上百个误报，故改为独立脚本 + data-sentences 传参。 */}
 
 </BaseLayout>
