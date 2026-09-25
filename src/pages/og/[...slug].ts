@@ -49,7 +49,7 @@ async function getFonts() {
 }
 
 // sharp 懒加载 + 图片转 PNG base64（带缓存，避免同一图标重复处理）
-let sharpPromise: Promise<typeof import('sharp')['default']> | null = null;
+let sharpPromise: Promise<(typeof import('sharp'))['default']> | null = null;
 function getSharp() {
   if (!sharpPromise) sharpPromise = import('sharp').then((m) => m.default);
   return sharpPromise;
@@ -66,7 +66,9 @@ async function imageToPngBase64(filePath: string): Promise<string> {
   } catch (e) {
     console.warn('[OG] 图片处理失败，使用透明占位图：', (e as Error).message);
     const sharp2 = await getSharp();
-    const transparent = await sharp2({ create: { width: 1, height: 1, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    const transparent = await sharp2({
+      create: { width: 1, height: 1, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
+    })
       .png()
       .toBuffer();
     const result = `data:image/png;base64,${transparent.toString('base64')}`;
@@ -115,7 +117,10 @@ export async function GET({ props }: APIContext<{ post: Post }>): Promise<Respon
           props: {
             style: { display: 'flex', alignItems: 'center', gap: '20px' },
             children: [
-              iconBase64 && { type: 'img', props: { src: iconBase64, width: 48, height: 48, style: { borderRadius: '10px' } } },
+              iconBase64 && {
+                type: 'img',
+                props: { src: iconBase64, width: 48, height: 48, style: { borderRadius: '10px' } },
+              },
               {
                 type: 'div',
                 props: {
@@ -142,7 +147,18 @@ export async function GET({ props }: APIContext<{ post: Post }>): Promise<Respon
                 props: {
                   style: { display: 'flex', alignItems: 'flex-start' },
                   children: [
-                    { type: 'div', props: { style: { width: '10px', height: '68px', backgroundColor: primaryColor, borderRadius: '6px', marginTop: '14px' } } },
+                    {
+                      type: 'div',
+                      props: {
+                        style: {
+                          width: '10px',
+                          height: '68px',
+                          backgroundColor: primaryColor,
+                          borderRadius: '6px',
+                          marginTop: '14px',
+                        },
+                      },
+                    },
                     {
                       type: 'div',
                       props: {
@@ -191,7 +207,10 @@ export async function GET({ props }: APIContext<{ post: Post }>): Promise<Respon
           props: {
             style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' },
             children: [
-              { type: 'div', props: { style: { fontSize: '26px', fontWeight: 600, color: textColor }, children: siteConfig.title } },
+              {
+                type: 'div',
+                props: { style: { fontSize: '26px', fontWeight: 600, color: textColor }, children: siteConfig.title },
+              },
               { type: 'div', props: { style: { fontSize: '26px', color: subtleColor }, children: pubDate } },
             ],
           },

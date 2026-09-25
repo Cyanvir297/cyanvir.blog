@@ -7,10 +7,7 @@ const sourceFont = path.join(projectRoot, 'src', 'assets', 'font', 'b.woff2');
 const subsetFont = path.join(projectRoot, 'public', 'font', 'b.subset.woff2');
 
 // 仅收集会实际显示为站点文案的文件；评论、留言等访客输入由 CSS fallback 字体承接。
-const sourceRoots = [
-  path.join(projectRoot, 'src'),
-  path.join(projectRoot, 'public', 'scripts'),
-];
+const sourceRoots = [path.join(projectRoot, 'src'), path.join(projectRoot, 'public', 'scripts')];
 const textExtensions = new Set(['.astro', '.css', '.js', '.json', '.md', '.ts', '.tsx', '.xsl']);
 
 function collectFiles(dir) {

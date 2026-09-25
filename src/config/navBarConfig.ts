@@ -60,8 +60,20 @@ export const navBarConfig: { nav: NavItemConfig[]; group: GroupMenuConfig[] } = 
       id: 'group-mysite',
       label: '个人相关',
       children: [
-        { id: 'ms-github', label: 'GitHub', href: 'https://github.com/Cyanvir297', icon: 'line-md:github-twotone', target: '_blank' },
-        { id: 'ms-bili', label: 'B站', href: 'https://space.bilibili.com/2025605944', icon: 'thesvg-color:bilibili', target: '_blank' },
+        {
+          id: 'ms-github',
+          label: 'GitHub',
+          href: 'https://github.com/Cyanvir297',
+          icon: 'line-md:github-twotone',
+          target: '_blank',
+        },
+        {
+          id: 'ms-bili',
+          label: 'B站',
+          href: 'https://space.bilibili.com/2025605944',
+          icon: 'thesvg-color:bilibili',
+          target: '_blank',
+        },
       ],
     },
   ],

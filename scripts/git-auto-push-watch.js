@@ -70,9 +70,22 @@ const BRANCH = currentBranch();
 
 // 跳过的目录（按本仓库的 .gitignore 对齐）
 const IGNORE_DIRS = new Set([
-  'node_modules', '.git', '.astro', 'dist', 'dist.old', '.backup',
-  '.vercel', '.netlify', '.qoder', '.workbuddy', '.obsidian', '.wrangler',
-  '.git.backup', '.wb-trash', 'uploads', 'backend',
+  'node_modules',
+  '.git',
+  '.astro',
+  'dist',
+  'dist.old',
+  '.backup',
+  '.vercel',
+  '.netlify',
+  '.qoder',
+  '.workbuddy',
+  '.obsidian',
+  '.wrangler',
+  '.git.backup',
+  '.wb-trash',
+  'uploads',
+  'backend',
 ]);
 
 // 防抖延迟（ms）：3 分钟无改动才推送

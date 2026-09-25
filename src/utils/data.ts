@@ -86,9 +86,7 @@ export function formatDate(
 
 /** 展示用年份（归档页按年分组）。用 en-CA 拿纯数字年份，zh-CN 会多一个「年」。 */
 export function formatYear(ts: string): string {
-  return new Intl.DateTimeFormat('en-CA', { year: 'numeric', timeZone: SITE_TZ }).format(
-    new Date(+ts * 1000),
-  );
+  return new Intl.DateTimeFormat('en-CA', { year: 'numeric', timeZone: SITE_TZ }).format(new Date(+ts * 1000));
 }
 
 function mapPost(entry: CollectionEntry<'posts'>): Post {

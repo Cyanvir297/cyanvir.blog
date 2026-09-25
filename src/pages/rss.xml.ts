@@ -39,9 +39,6 @@ export async function GET(context: APIContext) {
 
   // 注入 XSL 样式表引用：浏览器打开时渲染美化页面，阅读器/爬虫仍拿到标准 XML
   const xml = await resp.text();
-  const styled = xml.replace(
-    /^<\?xml[^>]*\?>/,
-    '$&\n<?xml-stylesheet type="text/xsl" href="/rss.xsl"?>'
-  );
+  const styled = xml.replace(/^<\?xml[^>]*\?>/, '$&\n<?xml-stylesheet type="text/xsl" href="/rss.xsl"?>');
   return new Response(styled, { headers: resp.headers });
 }

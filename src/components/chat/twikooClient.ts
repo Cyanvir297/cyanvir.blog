@@ -54,9 +54,7 @@ async function call<T>(action: string, params: Record<string, unknown> = {}): Pr
     saveAccessToken(json.accessToken);
   }
   if (typeof json.code === 'number' && json.code !== 0) {
-    throw new Error(
-      (typeof json.message === 'string' ? json.message : '留言服务异常') + ` (${json.code})`,
-    );
+    throw new Error((typeof json.message === 'string' ? json.message : '留言服务异常') + ` (${json.code})`);
   }
   return json as T;
 }
@@ -87,9 +85,7 @@ export interface SubmitCommentOptions {
 }
 
 /** COMMENT_SUBMIT：发留言，返回服务端生成的评论 */
-export async function submitComment(
-  options: SubmitCommentOptions,
-): Promise<Partial<TwikooComment> & { id: string }> {
+export async function submitComment(options: SubmitCommentOptions): Promise<Partial<TwikooComment> & { id: string }> {
   const result = await call<Partial<TwikooComment> & { id: string }>('COMMENT_SUBMIT', {
     nick: options.nick,
     mail: options.mail || '',

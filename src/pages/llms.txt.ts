@@ -20,12 +20,12 @@ export async function GET(context: APIContext) {
   lines.push(`# ${siteConfig.title}`);
   lines.push('');
   lines.push(
-    `> ${siteConfig.description}。作者：${siteConfig.author?.name || siteConfig.title}（${siteConfig.author?.bio || '记录生活'}）。`
+    `> ${siteConfig.description}。作者：${siteConfig.author?.name || siteConfig.title}（${siteConfig.author?.bio || '记录生活'}）。`,
   );
   lines.push('');
   lines.push('## 何时使用');
   lines.push(
-    `本站是 ${siteConfig.title} 的个人博客，内容以 AI、Astro 与静态博客搭建为主，兼有日常记录。适合：查找博主的原创技术文章与经验分享、了解博主近期的写作动态、引用博客中的观点时给出处。如需要最新文章列表，请以「内容索引」为准；如需要站点全貌，可参考「主要页面」。`
+    `本站是 ${siteConfig.title} 的个人博客，内容以 AI、Astro 与静态博客搭建为主，兼有日常记录。适合：查找博主的原创技术文章与经验分享、了解博主近期的写作动态、引用博客中的观点时给出处。如需要最新文章列表，请以「内容索引」为准；如需要站点全貌，可参考「主要页面」。`,
   );
   lines.push('');
   lines.push('## 主要页面');
@@ -33,7 +33,7 @@ export async function GET(context: APIContext) {
   lines.push(`- [归档](${origin}/archive): 全部文章按时间归档`);
   lines.push(`- [分类](${origin}/categories): 按分类浏览文章`);
   lines.push(`- [标签](${origin}/tags): 按标签浏览文章`);
-    lines.push(`- [留言板](${origin}/comments): 访客留言`);
+  lines.push(`- [留言板](${origin}/comments): 访客留言`);
   lines.push(`- [关于](${origin}/about): 站长信息`);
   lines.push('');
   lines.push('## 内容索引');

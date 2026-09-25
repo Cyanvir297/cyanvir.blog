@@ -16,19 +16,21 @@ const dateString = z.string().refine((v) => !Number.isNaN(Date.parse(v)), {
 // 恢复历史文章前先把 fl→category、zy→excerpt、cg→draft、zz→author 改好。
 const posts = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/posts' }),
-  schema: z.object({
-    title: z.string(),
-    slug: z.string().optional(),
-    date: dateString,
-    updated: dateString.optional(),
-    category: z.string().optional(),
-    tags: z.array(z.string()).default([]),
-    excerpt: z.string().default(''),
-    coverImage: z.string().default(''),
-    author: z.string().default(''),
-    draft: z.boolean().default(false),
-    hide: z.boolean().default(false),
-  }).strict(),
+  schema: z
+    .object({
+      title: z.string(),
+      slug: z.string().optional(),
+      date: dateString,
+      updated: dateString.optional(),
+      category: z.string().optional(),
+      tags: z.array(z.string()).default([]),
+      excerpt: z.string().default(''),
+      coverImage: z.string().default(''),
+      author: z.string().default(''),
+      draft: z.boolean().default(false),
+      hide: z.boolean().default(false),
+    })
+    .strict(),
 });
 
 export const collections = { posts };

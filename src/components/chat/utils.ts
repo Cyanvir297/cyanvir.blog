@@ -58,10 +58,7 @@ export function flattenComments(comments: TwikooComment[]): GuestbookMessage[] {
 }
 
 /** 合并两批消息（按 id 去重，乐观消息优先保留），保持时间升序 */
-export function mergeMessages(
-  current: GuestbookMessage[],
-  incoming: GuestbookMessage[],
-): GuestbookMessage[] {
+export function mergeMessages(current: GuestbookMessage[], incoming: GuestbookMessage[]): GuestbookMessage[] {
   const byId = new Map<string, GuestbookMessage>();
   for (const message of current) {
     byId.set(message.id, message);
@@ -112,17 +109,12 @@ export function dateLabel(value: number): string {
 }
 
 export function shouldShowDate(index: number, messages: GuestbookMessage[]): boolean {
-  return (
-    index === 0 ||
-    dateKey(messages[index - 1].createdAt) !== dateKey(messages[index].createdAt)
-  );
+  return index === 0 || dateKey(messages[index - 1].createdAt) !== dateKey(messages[index].createdAt);
 }
 
 /** 纯文本长度（去 HTML 与图片标记） */
 export function getTextLength(content: string): number {
-  const stripped = content
-    .replace(/<[^>]*>/gu, '')
-    .replace(/!\[[^\]]*\]\([^)]*\)/gu, '');
+  const stripped = content.replace(/<[^>]*>/gu, '').replace(/!\[[^\]]*\]\([^)]*\)/gu, '');
   return Array.from(stripped.replace(/\s/gu, '')).length;
 }
 
@@ -172,12 +164,7 @@ export function renderMessageMarkdown(content: string): string {
 /* ===== 图片内嵌工具（base64 ≤128KB，零服务端依赖） ===== */
 export const MAX_IMAGE_SIZE_BYTES = 128 * 1024;
 
-export const SUPPORTED_IMAGE_TYPES = new Set([
-  'image/png',
-  'image/jpeg',
-  'image/gif',
-  'image/webp',
-]);
+export const SUPPORTED_IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp']);
 
 /** 从异常对象提取错误文案 */
 export function getErrorMessage(error: unknown): string {

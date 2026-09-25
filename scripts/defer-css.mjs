@@ -53,7 +53,7 @@ for (const file of walk(DIST)) {
               `<link rel="stylesheet" href="${cssUrl}" media="print" onload="this.media='all'">`,
               `<noscript><link rel="stylesheet" href="${cssUrl}"></noscript>`,
             ].join('\n');
-          })
+          }),
     )
     .join('');
 

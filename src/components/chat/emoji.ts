@@ -95,16 +95,13 @@ export function getEmojiPacks(): OwOPack[] {
 export function convertEmojiShortcodes(text: string): string {
   const map = cache?.byKey;
   if (!map) return text;
-  return text.replace(
-    /:([A-Za-z0-9_\-\u4e00-\u9fa5]{1,32})/g,
-    (match, key: string) => {
-      const icon = map.get(key);
-      if (!icon) return match;
-      // 图片类短码 → 转成 <img>；颜文字/emoji 类直接输出原字符
-      if (/^https?:\/\//i.test(icon)) {
-        return `![${key}](${icon} "emoji")`;
-      }
-      return icon;
-    },
-  );
+  return text.replace(/:([A-Za-z0-9_\-\u4e00-\u9fa5]{1,32})/g, (match, key: string) => {
+    const icon = map.get(key);
+    if (!icon) return match;
+    // 图片类短码 → 转成 <img>；颜文字/emoji 类直接输出原字符
+    if (/^https?:\/\//i.test(icon)) {
+      return `![${key}](${icon} "emoji")`;
+    }
+    return icon;
+  });
 }

@@ -9,7 +9,9 @@
     "build": "astro build && node scripts/defer-css.mjs",
     "preview": "astro preview",
     "check": "astro check",
-    "typecheck": "tsc --noEmit",
+    "lint": "eslint src scripts astro.config.mjs",
+    "format": "prettier --write \"src/**/*.{ts,js,mjs}\" \"scripts/**/*.{js,mjs}\" \"astro.config.mjs\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js,mjs}\" \"scripts/**/*.{js,mjs}\" \"astro.config.mjs\"",
     "font:subset": "node scripts/subset-font.mjs"
   },
   "dependencies": {
@@ -35,9 +37,16 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@eslint/js": "^10.0.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "chokidar": "5.0.0",
-    "typescript": "^6.0.3"
+    "eslint": "^10.11.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.12.0",
+    "prettier": "^3.9.9",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.1"
   }
 }

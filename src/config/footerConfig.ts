@@ -3,7 +3,11 @@
 // 与 showMotto / motto* 六键（映射进 SiteSettings 后无任何读取方）。要恢复见 git 历史。
 export const footerConfig = {
   footerBadges: JSON.stringify([
-    { title: '博客框架为Astro', href: 'https://astro.build', img: 'https://img.shields.io/badge/Astro-BC52EE?style=flat&logo=astro&logoColor=fff' },
+    {
+      title: '博客框架为Astro',
+      href: 'https://astro.build',
+      img: 'https://img.shields.io/badge/Astro-BC52EE?style=flat&logo=astro&logoColor=fff',
+    },
   ]),
 
   // ===== 仪表盘长条（脚页顶部）=====
